@@ -90,14 +90,30 @@ def registrar_consentimento(c: Consentimento) -> dict:
     return {"ok": True, "audit_hash": h}
 
 
+@app.get("/consentimento/{titular_id}")
+def consultar_consentimento(titular_id: str) -> dict:
+    """Consulta status de consentimento de um titular."""
+    db = _load_consent()
+    if titular_id not in db:
+        raise HTTPException(404, f"Titular '{titular_id}' não encontrado")
+    return {"titular": titular_id, "finalidades": db[titular_id]}
+
+
 @app.delete("/titular/{titular_id}")
 def excluir(titular_id: str) -> dict:
-    """Direito ao esquecimento (LGPD art. 18)."""
+    """Direito ao esquecimento (LGPD art. 18) com cascade completo."""
     db = _load_consent()
-    existed = db.pop(titular_id, None) is not None
+    existed = titular_id in db
+    purposes_removed = list(db.get(titular_id, {}).keys())
+    db.pop(titular_id, None)
     _save_consent(db)
-    h = _append({"event": "erase", "titular": titular_id, "existia": existed})
-    return {"removido": existed, "audit_hash": h}
+    h = _append({
+        "event": "erase",
+        "titular": titular_id,
+        "existia": existed,
+        "finalidades_removidas": purposes_removed,
+    })
+    return {"removido": existed, "finalidades_removidas": purposes_removed, "audit_hash": h}
 
 
 @app.get("/auditoria")

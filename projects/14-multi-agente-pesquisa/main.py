@@ -72,7 +72,7 @@ def writer(state: State) -> dict:
 
 
 def should_iterate(state: State) -> str:
-    if state["critique"].strip().upper().startswith("OK") or state["iterations"] >= 1:
+    if state["critique"].strip().upper().startswith("OK") or state["iterations"] >= 3:
         return "writer"
     return "researcher"
 

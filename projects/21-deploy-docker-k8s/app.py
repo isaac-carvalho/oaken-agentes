@@ -20,8 +20,17 @@ class Pergunta(BaseModel):
 
 
 @app.get("/health")
-def health() -> dict[str, str]:
-    return {"status": "ok"}
+def health() -> dict:
+    """Health check that verifies core dependencies are importable."""
+    checks: dict[str, str] = {}
+    for mod_name in ("fastapi", "pydantic", "uvicorn"):
+        try:
+            __import__(mod_name)
+            checks[mod_name] = "ok"
+        except ImportError:
+            checks[mod_name] = "missing"
+    all_ok = all(v == "ok" for v in checks.values())
+    return {"status": "ok" if all_ok else "degraded", "dependencies": checks}
 
 
 @app.get("/ready")

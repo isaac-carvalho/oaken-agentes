@@ -13,9 +13,13 @@ PII_PATTERNS = {
     "email": re.compile(r"\b[\w.+-]+@[\w-]+\.[\w.-]+\b"),
     "phone": re.compile(r"\b(?:\+?55\s?)?\(?\d{2}\)?\s?\d{4,5}-?\d{4}\b"),
     "credit_card": re.compile(r"\b(?:\d[ -]*?){13,16}\b"),
+    "passport": re.compile(r"\b[A-Z]{1,2}\d{6,9}\b"),
+    "cnpj": re.compile(r"\b\d{2}\.?\d{3}\.?\d{3}/?\d{4}-?\d{2}\b"),
+    "rg": re.compile(r"\b\d{1,2}\.?\d{3}\.?\d{3}-?[\dXx]\b"),
 }
 
-BLOCKED_TERMS = {"matar", "suicídio", "violência explícita"}
+DEFAULT_BLOCKED_TERMS: set[str] = {"matar", "suicídio", "violência explícita"}
+BLOCKED_TERMS = DEFAULT_BLOCKED_TERMS
 
 
 @dataclass
@@ -36,9 +40,11 @@ def redact(text: str) -> tuple[str, dict[str, int]]:
     return text, counts
 
 
-def check_toxicity(text: str) -> tuple[bool, str | None]:
+def check_toxicity(text: str, blocked_terms: set[str] | None = None) -> tuple[bool, str | None]:
+    """Verifica toxicidade. Se blocked_terms for passado, usa-o em vez do default."""
+    terms = blocked_terms if blocked_terms is not None else BLOCKED_TERMS
     lower = text.lower()
-    for term in BLOCKED_TERMS:
+    for term in terms:
         if term in lower:
             return True, f"contém termo bloqueado: {term}"
     return False, None

@@ -1,6 +1,7 @@
 """Loop write → run → fix."""
 from __future__ import annotations
 
+import ast
 import re
 import sys
 from pathlib import Path
@@ -19,8 +20,20 @@ CODE_BLOCK = re.compile(r"```(?:python)?\s*(.+?)```", re.DOTALL)
 
 
 def extract_code(text: str) -> str:
+    """Extract Python code from LLM response, validating with ast.parse."""
     m = CODE_BLOCK.search(text)
-    return m.group(1).strip() if m else text.strip()
+    candidate = m.group(1).strip() if m else text.strip()
+    try:
+        ast.parse(candidate)
+        return candidate
+    except SyntaxError:
+        # If the extracted block is invalid, try the full text
+        try:
+            ast.parse(text.strip())
+            return text.strip()
+        except SyntaxError:
+            # Return candidate as-is; sandbox will report the error
+            return candidate
 
 
 @app.command()

@@ -14,6 +14,8 @@ df = pd.DataFrame({
     "x2": rng.normal(size=n),
     "x3": rng.uniform(0, 1, n),
 })
-df["y"] = ((0.7 * df["x1"] - 0.3 * df["x2"] + 0.5 * df["x3"]) > 0).astype(int)
+# Add noise to prevent data leakage (deterministic boundary => AUC ~1.0)
+noise = rng.normal(0, 0.5, n)
+df["y"] = ((0.7 * df["x1"] - 0.3 * df["x2"] + 0.5 * df["x3"] + noise) > 0).astype(int)
 df.to_csv(OUT, index=False)
 print(f"Dataset salvo em {OUT} ({len(df)} linhas)")
