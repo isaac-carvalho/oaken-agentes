@@ -1,241 +1,1308 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Oaken Agentes — Portfólio de IA & Agentes</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#0a0d14; --bg-2:#11151f; --card:#161b27; --border:#222a3a;
-  --text:#e6ebf5; --muted:#8a93a6; --accent:#4f8cff; --accent-2:#a44dff;
-  --green:#22c55e; --orange:#f97316;
-}
-html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-.container{max-width:1200px;margin:0 auto;padding:0 24px}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio IA & Agentes — Engenharia de Agentes ponta-a-ponta</title>
 
-header{padding:80px 0 48px;background:radial-gradient(ellipse at top,rgba(79,140,255,.18),transparent 70%)}
-header .eyebrow{font-family:'DM Sans';font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-size:13px;margin-bottom:14px}
-header h1{font-family:'DM Sans';font-size:clamp(36px,5vw,56px);font-weight:800;line-height:1.1;margin-bottom:18px}
-header h1 span{background:linear-gradient(90deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
-header p{color:var(--muted);font-size:18px;max-width:720px;margin-bottom:28px}
-header .cta{display:flex;gap:12px;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:10px;font-weight:600;border:1px solid var(--border);background:var(--card);color:var(--text);transition:.15s ease}
-.btn:hover{border-color:var(--accent);text-decoration:none;transform:translateY(-1px)}
-.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));border:none}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:48px}
-.stats .stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px}
-.stats .num{font-family:'DM Sans';font-size:30px;font-weight:800;color:var(--text)}
-.stats .lbl{color:var(--muted);font-size:13px;margin-top:4px;text-transform:uppercase;letter-spacing:.1em}
+  <!-- SEO & Social -->
+  <meta name="description" content="Portfolio com 21 projetos de IA e Agentes rodando ponta-a-ponta: RAG, Multi-Agentes, MLOps, Fine-Tuning, Deploy Cloud. Especialista em automação inteligente com WhatsApp, LangGraph e AWS.">
+  <meta property="og:title" content="Portfolio IA & Agentes — Engenharia de Agentes ponta-a-ponta">
+  <meta property="og:description" content="21 projetos rodando. RAG, Multi-Agentes, Fine-Tuning, MLOps, Deploy Cloud. Código aberto para revisão.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://recuperarcontato4-prog.github.io/oaken-agentes/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="robots" content="index, follow">
 
-section{padding:64px 0;border-top:1px solid var(--border)}
-section h2{font-family:'DM Sans';font-size:28px;font-weight:700;margin-bottom:8px}
-section .lead{color:var(--muted);margin-bottom:32px;max-width:700px}
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;transition:.15s ease;display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden}
-.card:hover{border-color:var(--accent);transform:translateY(-2px)}
-.card .num{font-family:'DM Sans';font-weight:800;font-size:13px;color:var(--accent);letter-spacing:.1em}
-.card h3{font-family:'DM Sans';font-size:18px;font-weight:700}
-.card p{color:var(--muted);font-size:14px;flex:1}
-.card .stack{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
-.tag{font-size:11px;padding:3px 8px;background:var(--bg-2);border:1px solid var(--border);border-radius:999px;color:var(--muted)}
-.card .open{font-size:13px;font-weight:600;color:var(--accent)}
-.card.fund::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,#22c55e,#4f8cff)}
-.card.especialista::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,#4f8cff,#a44dff)}
-.card.engenharia::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,#a44dff,#f97316)}
+  <!-- Favicon SVG inline -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
 
-footer{padding:40px 0 60px;color:var(--muted);font-size:14px;text-align:center;border-top:1px solid var(--border)}
-footer a{color:var(--text)}
+  <style>
+    /* ── RESET & TOKENS ────────────────────────────── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-@media(max-width:680px){
-  .stats{grid-template-columns:repeat(2,1fr)}
-}
-</style>
+    :root {
+      --bg:       #080b12;
+      --bg-2:     #0e1220;
+      --bg-3:     #131928;
+      --card:     #111828;
+      --card-h:   #16203a;
+      --border:   #1e2a42;
+      --border-h: #2e4070;
+      --text:     #e8edf8;
+      --muted:    #7a87a0;
+      --faint:    #3a4560;
+      --accent:   #4f8cff;
+      --purple:   #a44dff;
+      --green:    #22c55e;
+      --orange:   #f97316;
+      --teal:     #0fb8b0;
+      --grad-a:   linear-gradient(135deg, #4f8cff, #a44dff);
+      --grad-b:   linear-gradient(135deg, #22c55e, #4f8cff);
+      --grad-c:   linear-gradient(135deg, #a44dff, #f97316);
+      --radius:   14px;
+      --radius-s: 8px;
+      --font:     'DM Sans', system-ui, sans-serif;
+      --mono:     'JetBrains Mono', monospace;
+      --shadow:   0 4px 32px rgba(0,0,0,.45);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    img { max-width: 100%; display: block; }
+
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── NAV ───────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(8,11,18,.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      gap: 16px;
+    }
+    .nav-logo {
+      font-weight: 800;
+      font-size: 17px;
+      color: var(--text);
+      letter-spacing: -.02em;
+    }
+    .nav-logo span { background: var(--grad-a); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .nav-links a { color: var(--muted); transition: color .15s; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 16px;
+      border-radius: var(--radius-s);
+      background: var(--grad-a);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      transition: opacity .15s, transform .15s;
+    }
+    .nav-cta:hover { opacity: .88; transform: translateY(-1px); text-decoration: none; }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+    }
+
+    /* ── HERO ──────────────────────────────────────── */
+    .hero {
+      padding: 96px 0 72px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 50% 0%, rgba(79,140,255,.13), transparent),
+        radial-gradient(ellipse 40% 40% at 80% 50%, rgba(164,77,255,.09), transparent);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(79,140,255,.12);
+      border: 1px solid rgba(79,140,255,.3);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+    .hero-badge::before { content: '●'; font-size: 8px; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+
+    .hero h1 {
+      font-size: clamp(38px, 5.5vw, 64px);
+      font-weight: 800;
+      line-height: 1.06;
+      letter-spacing: -.03em;
+      margin-bottom: 22px;
+      max-width: 820px;
+    }
+    .hero h1 .grad {
+      background: var(--grad-a);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero-sub {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 660px;
+      margin-bottom: 36px;
+      line-height: 1.7;
+    }
+    .hero-sub strong { color: var(--text); }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 64px;
+    }
+
+    /* ── BUTTONS ───────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: var(--radius-s);
+      font-size: 14px;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      cursor: pointer;
+      transition: border-color .15s, transform .15s, box-shadow .15s;
+    }
+    .btn:hover { border-color: var(--border-h); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.3); text-decoration: none; }
+    .btn-primary {
+      background: var(--grad-a);
+      border: none;
+      color: #fff;
+    }
+    .btn-primary:hover { box-shadow: 0 8px 28px rgba(79,140,255,.35); }
+    .btn-ghost { background: transparent; }
+    .btn-sm { padding: 7px 14px; font-size: 13px; }
+
+    /* ── STATS ─────────────────────────────────────── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--grad-a);
+      opacity: .5;
+    }
+    .stat-num {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      background: var(--grad-a);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-lbl {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+    }
+
+    @media (max-width: 680px) { .stats-grid { grid-template-columns: repeat(2,1fr); } }
+
+    /* ── SECTION BASE ──────────────────────────────── */
+    section { padding: 80px 0; }
+    .section-divider { border: none; border-top: 1px solid var(--border); }
+    .section-eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-size: clamp(26px, 3vw, 34px);
+      font-weight: 800;
+      letter-spacing: -.02em;
+      margin-bottom: 10px;
+    }
+    .section-lead {
+      color: var(--muted);
+      max-width: 660px;
+      margin-bottom: 40px;
+      font-size: 16px;
+    }
+
+    /* ── SOBRE ─────────────────────────────────────── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+    .about-text p {
+      color: var(--muted);
+      margin-bottom: 16px;
+      font-size: 16px;
+      line-height: 1.75;
+    }
+    .about-text p strong { color: var(--text); }
+    .about-skills {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .skill-row { display: flex; flex-direction: column; gap: 6px; }
+    .skill-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; }
+    .skill-header span:last-child { color: var(--muted); }
+    .skill-bar { height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .skill-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: var(--grad-a);
+      transition: width 1s ease;
+    }
+    @media (max-width: 760px) { .about-grid { grid-template-columns: 1fr; } }
+
+    /* ── PRODUCT SHOWCASE ──────────────────────────── */
+    .product-section {
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 80px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .product-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 50% 50% at 20% 50%, rgba(34,197,94,.06), transparent),
+        radial-gradient(ellipse 50% 50% at 80% 50%, rgba(79,140,255,.06), transparent);
+      pointer-events: none;
+    }
+    .product-banner {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 40px 36px;
+      position: relative;
+      overflow: hidden;
+    }
+    .product-banner::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--green), var(--accent), var(--purple), var(--orange));
+    }
+    .product-live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 14px;
+      border-radius: 999px;
+      background: rgba(34,197,94,.12);
+      border: 1px solid rgba(34,197,94,.35);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 20px;
+    }
+    .product-live-badge::before { content: '●'; font-size: 9px; animation: pulse 1.5s infinite; }
+    .product-title {
+      font-size: clamp(28px, 3.5vw, 40px);
+      font-weight: 800;
+      letter-spacing: -.025em;
+      margin-bottom: 14px;
+      line-height: 1.1;
+    }
+    .product-title .grad-green {
+      background: linear-gradient(90deg, var(--green), var(--teal));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .product-desc {
+      color: var(--muted);
+      font-size: 17px;
+      max-width: 700px;
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .product-desc strong { color: var(--text); }
+    .product-metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+    .metric {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+    }
+    .metric-num {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .metric-num.green { color: var(--green); }
+    .metric-num.blue { color: var(--accent); }
+    .metric-num.purple { color: var(--purple); }
+    .metric-num.orange { color: var(--orange); }
+    .metric-num.teal { color: var(--teal); }
+    .metric-lbl {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+    }
+    .product-features {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-s);
+    }
+    .feature-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+    .feature-text h4 { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+    .feature-text p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+    .product-scale {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-top: 8px;
+    }
+    .product-scale h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .product-scale h3 .grad { background: var(--grad-a); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .product-scale p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+      max-width: 800px;
+    }
+    .product-scale p strong { color: var(--text); }
+    .product-note {
+      margin-top: 24px;
+      padding: 14px 18px;
+      background: rgba(79,140,255,.06);
+      border: 1px solid rgba(79,140,255,.2);
+      border-radius: var(--radius-s);
+      font-size: 13px;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .product-note strong { color: var(--accent); font-style: normal; }
+
+    /* ── PROJECT CARDS ─────────────────────────────── */
+    .projects-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .track-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid;
+    }
+    .track-fund   { background: rgba(34,197,94,.1);   border-color: rgba(34,197,94,.3);   color: var(--green); }
+    .track-esp    { background: rgba(79,140,255,.1);  border-color: rgba(79,140,255,.3);  color: var(--accent); }
+    .track-eng    { background: rgba(164,77,255,.1);  border-color: rgba(164,77,255,.3);  color: var(--purple); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .2s, transform .2s, box-shadow .2s;
+    }
+    .card:hover {
+      border-color: var(--border-h);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+    }
+    .card-accent {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .card.fund     .card-accent { background: var(--grad-b); }
+    .card.esp      .card-accent { background: var(--grad-a); }
+    .card.eng      .card-accent { background: var(--grad-c); }
+
+    .card-num {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      color: var(--faint);
+    }
+    .card h3 {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      line-height: 1.3;
+    }
+    .card p { color: var(--muted); font-size: 14px; flex: 1; line-height: 1.6; }
+    .card-stack { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+    .card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-top: 4px;
+      transition: gap .15s;
+    }
+    .card-link:hover { gap: 9px; text-decoration: none; }
+
+    /* ── DIFERENCIAIS ──────────────────────────────── */
+    .diff-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    .diff-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      transition: border-color .2s, transform .2s;
+    }
+    .diff-card:hover { border-color: var(--border-h); transform: translateY(-2px); }
+    .diff-icon { font-size: 28px; margin-bottom: 14px; }
+    .diff-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+    .diff-card p { color: var(--muted); font-size: 14px; line-height: 1.65; }
+
+    @media (max-width: 760px) { .diff-grid { grid-template-columns: 1fr; } }
+
+    /* ── CTA / CONTACT ─────────────────────────────── */
+    .cta-section {
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 80px 0;
+      text-align: center;
+    }
+    .cta-section h2 {
+      font-size: clamp(28px, 3.5vw, 42px);
+      font-weight: 800;
+      letter-spacing: -.025em;
+      margin-bottom: 14px;
+    }
+    .cta-section h2 .grad {
+      background: var(--grad-a);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .cta-section p {
+      color: var(--muted);
+      font-size: 17px;
+      max-width: 540px;
+      margin: 0 auto 36px;
+    }
+    .cta-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    /* ── FOOTER ────────────────────────────────────── */
+    footer {
+      padding: 40px 0 56px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .footer-brand {
+      font-weight: 800;
+      font-size: 16px;
+      letter-spacing: -.02em;
+    }
+    .footer-brand span { background: var(--grad-a); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+      font-size: 14px;
+    }
+    .footer-links a { color: var(--muted); transition: color .15s; }
+    .footer-links a:hover { color: var(--text); text-decoration: none; }
+    .footer-copy { color: var(--faint); font-size: 13px; width: 100%; text-align: center; margin-top: 24px; }
+
+    /* ── SCROLL REVEAL ─────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .55s ease, transform .55s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ── MISC ──────────────────────────────────────── */
+    .spacer { height: 1px; background: var(--border); }
+  </style>
 </head>
 <body>
 
-<header>
-  <div class="container">
-    <div class="eyebrow">Portfólio · Carreiras Alura</div>
-    <h1>21 projetos de <span>IA & Agentes</span> rodando ponta-a-ponta</h1>
-    <p>Construído em cima das carreiras <strong>Especialista em IA</strong> e <strong>Engenharia de Agentes de IA</strong>. Cada projeto roda com um único comando, tem README objetivo e foca em demonstrar uma combinação distinta de skills do mercado.</p>
-    <div class="cta">
-      <a class="btn primary" href="https://github.com/recuperarcontato4-prog/oaken-agentes">↗ Repositório no GitHub</a>
-      <a class="btn" href="https://github.com/recuperarcontato4-prog/oaken-agentes/blob/main/docs/ROADMAP.md" target="_blank" rel="noopener">📍 Roadmap & skills</a>
-      <a class="btn" href="./pito-presentation.html">🟧 Landing Oaken IA</a>
+  <!-- NAV -->
+  <nav>
+    <div class="container nav-inner">
+      <div class="nav-logo"><span>IA</span> & Agentes</div>
+      <ul class="nav-links">
+        <li><a href="#sobre">Sobre</a></li>
+        <li><a href="#produto">Produto</a></li>
+        <li><a href="#projetos">Projetos</a></li>
+        <li><a href="#diferenciais">Diferenciais</a></li>
+        <li><a href="#contato">Contato</a></li>
+      </ul>
+      <a href="#contato" class="nav-cta">Falar comigo →</a>
     </div>
-    <div class="stats">
-      <div class="stat"><div class="num">21</div><div class="lbl">projetos</div></div>
-      <div class="stat"><div class="num">2</div><div class="lbl">carreiras Alura</div></div>
-      <div class="stat"><div class="num">15+</div><div class="lbl">stacks distintas</div></div>
-      <div class="stat"><div class="num">100%</div><div class="lbl">código aberto</div></div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-badge">Disponível para projetos</div>
+      <h1>
+        Engenharia de <span class="grad">Agentes de IA</span><br>
+        rodando ponta-a-ponta.
+      </h1>
+      <p class="hero-sub">
+        21 projetos construídos do zero: <strong>RAG</strong>, <strong>Multi-Agentes</strong>,
+        <strong>Fine-Tuning</strong>, <strong>MLOps</strong>, <strong>Deploy Cloud</strong>.
+        Cada um roda com um único comando e tem código aberto para revisão.
+      </p>
+      <div class="hero-actions">
+        <a href="https://github.com/recuperarcontato4-prog/oaken-agentes" class="btn btn-primary" target="_blank" rel="noopener">
+          ↗ Ver repositório
+        </a>
+        <a href="#projetos" class="btn">
+          📋 Explorar projetos
+        </a>
+        <a href="./pito-presentation.html" class="btn btn-ghost">
+          🟧 Produto Oaken IA
+        </a>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-grid reveal">
+        <div class="stat-card">
+          <div class="stat-num">21</div>
+          <div class="stat-lbl">Projetos end-to-end</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">15+</div>
+          <div class="stat-lbl">Stacks distintas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">2</div>
+          <div class="stat-lbl">Carreiras concluídas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">1 cmd</div>
+          <div class="stat-lbl">Para rodar qualquer projeto</div>
+        </div>
+      </div>
     </div>
-  </div>
-</header>
+  </header>
 
-<section>
-  <div class="container">
-    <h2>🌱 Fundamentos</h2>
-    <p class="lead">Base compartilhada entre as duas carreiras. Cliente LLM unificado, EDA com narrativa de IA e framework de avaliação de prompts.</p>
-    <div class="grid">
-      <a class="card fund" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/01-python-api-llm-helper" target="_blank" rel="noopener">
-        <div class="num">01</div><h3>Python API LLM Helper</h3>
-        <p>CLI que roteia tarefas (resumir, traduzir, gerar código) para OpenAI / Gemini / Anthropic com auto-detect.</p>
-        <div class="stack"><span class="tag">Typer</span><span class="tag">OpenAI</span><span class="tag">Gemini</span><span class="tag">Anthropic</span></div>
-        <span class="open">Abrir →</span>
-      </a>
-      <a class="card fund" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/02-pandas-ia-analista" target="_blank" rel="noopener">
-        <div class="num">02</div><h3>Pandas IA Analista</h3>
-        <p>EDA automática num CSV + relatório narrativo gerado por LLM com 5 insights e próximos passos.</p>
-        <div class="stack"><span class="tag">Pandas</span><span class="tag">Matplotlib</span><span class="tag">LLM</span></div>
-        <span class="open">Abrir →</span>
-      </a>
-      <a class="card fund" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/03-eval-prompts-framework" target="_blank" rel="noopener">
-        <div class="num">03</div><h3>Eval Prompts Framework</h3>
-        <p>A/B test de prompts: roda variantes, mede acurácia, latência e tokens, gera relatório markdown.</p>
-        <div class="stack"><span class="tag">Pydantic</span><span class="tag">YAML</span><span class="tag">pytest</span></div>
-        <span class="open">Abrir →</span>
-      </a>
+  <!-- SOBRE -->
+  <section id="sobre">
+    <div class="container">
+      <div class="about-grid reveal">
+        <div class="about-text">
+          <div class="section-eyebrow">Sobre</div>
+          <h2 class="section-title">Construo sistemas que<br>funcionam em produção.</h2>
+          <p>
+            Especialista em <strong>IA aplicada</strong> com foco em agentes inteligentes, automação de atendimento e pipelines de machine learning que saem do notebook e vão para produção real.
+          </p>
+          <p>
+            Combinação de <strong>Especialista em IA</strong> e <strong>Engenharia de Agentes de IA</strong> pelas carreiras Alura — com projetos que cobrem desde LLMs e RAG até MLOps com rastreabilidade e deploy em Kubernetes.
+          </p>
+          <p>
+            Produto em produção: <strong>Oaken IA</strong> — plataforma de agentes para WhatsApp Business que atende clientes reais 24/7 com IA.
+          </p>
+          <div style="margin-top: 24px;">
+            <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/blob/main/docs/ROADMAP.md" class="btn btn-sm" target="_blank" rel="noopener">
+              📍 Ver roadmap completo
+            </a>
+          </div>
+        </div>
+
+        <div class="about-skills">
+          <div class="section-eyebrow">Competências</div>
+          <div class="skill-row">
+            <div class="skill-header"><span>LLMs & Prompt Engineering</span><span>Avançado</span></div>
+            <div class="skill-bar"><div class="skill-fill" style="width:92%"></div></div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-header"><span>Agentes & LangGraph</span><span>Avançado</span></div>
+            <div class="skill-bar"><div class="skill-fill" style="width:88%"></div></div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-header"><span>RAG & Embeddings</span><span>Avançado</span></div>
+            <div class="skill-bar"><div class="skill-fill" style="width:90%"></div></div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-header"><span>Python & FastAPI</span><span>Avançado</span></div>
+            <div class="skill-bar"><div class="skill-fill" style="width:95%"></div></div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-header"><span>MLOps (MLflow, DVC)</span><span>Intermediário</span></div>
+            <div class="skill-bar"><div class="skill-fill" style="width:75%"></div></div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-header"><span>Docker & Kubernetes</span><span>Intermediário</span></div>
+            <div class="skill-bar"><div class="skill-fill" style="width:78%"></div></div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-header"><span>AWS (Bedrock, Lambda)</span><span>Intermediário</span></div>
+            <div class="skill-bar"><div class="skill-fill" style="width:72%"></div></div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-header"><span>Fine-Tuning & LoRA</span><span>Intermediário</span></div>
+            <div class="skill-bar"><div class="skill-fill" style="width:70%"></div></div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section>
-  <div class="container">
-    <h2>🤖 Especialista em IA</h2>
-    <p class="lead">Trilha N8N, Chatbots, RAG, Agentes & Modelos, Governança e Cloud.</p>
-    <div class="grid">
-      <a class="card especialista" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/04-n8n-atendimento-whatsapp" target="_blank" rel="noopener">
-        <div class="num">04 · N1</div><h3>n8n + Atendimento WhatsApp</h3>
-        <p>Workflow n8n + API FastAPI que classifica intenção e gera resposta para WhatsApp Business.</p>
-        <div class="stack"><span class="tag">n8n</span><span class="tag">FastAPI</span></div>
-        <span class="open">Abrir →</span>
-      </a>
-      <a class="card especialista" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/05-chatbot-rag-pdfs" target="_blank" rel="noopener">
-        <div class="num">05 · N1</div><h3>Chatbot RAG sobre PDFs</h3>
-        <p>Streamlit indexando PDFs em ChromaDB; respostas com citação de página + trecho.</p>
-        <div class="stack"><span class="tag">Streamlit</span><span class="tag">LangChain</span><span class="tag">ChromaDB</span></div>
-        <span class="open">Abrir →</span>
-      </a>
-      <a class="card especialista" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/06-rag-multimodal-clip" target="_blank" rel="noopener">
-        <div class="num">06 · N1</div><h3>RAG Multimodal (CLIP)</h3>
-        <p>Busca cross-modal: query por texto OU imagem, indexação com embeddings CLIP.</p>
-        <div class="stack"><span class="tag">CLIP</span><span class="tag">ChromaDB</span><span class="tag">PyTorch</span></div>
-        <span class="open">Abrir →</span>
-      </a>
-      <a class="card especialista" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/07-agente-tools-zero-shot" target="_blank" rel="noopener">
-        <div class="num">07 · N2</div><h3>Agente Zero-Shot com Tools</h3>
-        <p>Loop ReAct minimalista com 3 tools: calc, web search e execução Python.</p>
-        <div class="stack"><span class="tag">ReAct</span><span class="tag">DuckDuckGo</span><span class="tag">numexpr</span></div>
-        <span class="open">Abrir →</span>
-      </a>
-      <a class="card especialista" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/08-router-multi-modelo" target="_blank" rel="noopener">
-        <div class="num">08 · N2</div><h3>Router Multi-Modelo</h3>
-        <p>Política declarativa que escolhe modelo por custo×qualidade, com fallback resiliente.</p>
-        <div class="stack"><span class="tag">Pydantic</span><span class="tag">YAML policy</span></div>
-        <span class="open">Abrir →</span>
-      </a>
-      <a class="card especialista" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/09-benchmark-llms" target="_blank" rel="noopener">
-        <div class="num">09 · N2</div><h3>Benchmark LLMs</h3>
-        <p>Comparativo lado-a-lado de OpenAI, Gemini, Claude e Llama (via Ollama).</p>
-        <div class="stack"><span class="tag">Streamlit</span><span class="tag">Ollama</span></div>
-        <span class="open">Abrir →</span>
-      </a>
-      <a class="card especialista" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/10-guardrails-llm" target="_blank" rel="noopener">
-        <div class="num">10 · N3</div><h3>Guardrails LLM</h3>
-        <p>PII redaction, filtro de toxicidade e audit log obrigatórios em qualquer chamada LLM.</p>
-        <div class="stack"><span class="tag">Regex</span><span class="tag">Audit log</span></div>
-        <span class="open">Abrir →</span>
-      </a>
-      <a class="card especialista" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/11-deploy-aws-bedrock" target="_blank" rel="noopener">
-        <div class="num">11 · N3</div><h3>AWS Bedrock + Terraform</h3>
-        <p>Chatbot serverless: Lambda + API Gateway + Bedrock, infra como código.</p>
-        <div class="stack"><span class="tag">AWS</span><span class="tag">Terraform</span><span class="tag">Bedrock</span></div>
-        <span class="open">Abrir →</span>
-      </a>
-      <a class="card especialista" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/12-lgpd-compliance-toolkit" target="_blank" rel="noopener">
-        <div class="num">12 · N3</div><h3>LGPD Compliance Toolkit</h3>
-        <p>API com anonimização, gestão de consentimento e log auditável (hash chain).</p>
-        <div class="stack"><span class="tag">FastAPI</span><span class="tag">Hash chain</span></div>
-        <span class="open">Abrir →</span>
-      </a>
+  <!-- PRODUTO EM PRODUCAO -->
+  <section class="product-section" id="produto">
+    <div class="container">
+      <div class="product-banner reveal">
+        <div class="product-live-badge">Em produção — clientes reais</div>
+        <h2 class="product-title">
+          Oaken IA — Plataforma de <span class="grad-green">Agentes WhatsApp</span><br>
+          para pequenas empresas.
+        </h2>
+        <p class="product-desc">
+          Não é demo. Não é prova de conceito. É um <strong>SaaS multi-tenant em produção real</strong> que atende clientes 24/7 pelo WhatsApp com agentes de IA que qualificam leads, agendam compromissos e fecham vendas — sem intervenção humana.
+        </p>
+
+        <!-- METRICAS -->
+        <div class="product-metrics">
+          <div class="metric">
+            <div class="metric-num green">4</div>
+            <div class="metric-lbl">Tenants ativos</div>
+          </div>
+          <div class="metric">
+            <div class="metric-num blue">10+</div>
+            <div class="metric-lbl">Services em produção</div>
+          </div>
+          <div class="metric">
+            <div class="metric-num purple">131</div>
+            <div class="metric-lbl">Testes automatizados</div>
+          </div>
+          <div class="metric">
+            <div class="metric-num teal">24/7</div>
+            <div class="metric-lbl">Uptime de atendimento</div>
+          </div>
+          <div class="metric">
+            <div class="metric-num orange">&lt;3s</div>
+            <div class="metric-lbl">Tempo de resposta</div>
+          </div>
+          <div class="metric">
+            <div class="metric-num green">3</div>
+            <div class="metric-lbl">Idiomas suportados</div>
+          </div>
+        </div>
+
+        <!-- FEATURES -->
+        <div class="product-features">
+          <div class="feature-item">
+            <div class="feature-icon">🧠</div>
+            <div class="feature-text">
+              <h4>Arquitetura Multi-Agente Hierárquica</h4>
+              <p>Master Orchestrator roteia para sub-agentes especializados: atendimento, agendamento, qualificação. Cada um com papel e limites definidos.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🏢</div>
+            <div class="feature-text">
+              <h4>Multi-Tenant com Isolamento Total</h4>
+              <p>Cada cliente opera em sandbox próprio — base de dados separada, configuração independente, sem contaminação cruzada.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🎙️</div>
+            <div class="feature-text">
+              <h4>Áudio com Whisper</h4>
+              <p>Transcrição automática de mensagens de voz. O agente entende áudio e responde em texto — sem perder nenhuma mensagem.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">💰</div>
+            <div class="feature-text">
+              <h4>Controle de Custos por Tenant</h4>
+              <p>Budget diário de LLM, rate limiting por tenant e por prospect, kill switch global e individual. Zero surpresas na fatura.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🛡️</div>
+            <div class="feature-text">
+              <h4>Segurança & Compliance</h4>
+              <p>PII masking, audit log imutável com hash chain, proteção contra prompt injection, LGPD-ready. Pronto para mercados regulados.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📊</div>
+            <div class="feature-text">
+              <h4>Observabilidade Total</h4>
+              <p>Structured logging JSON, correlation IDs ponta-a-ponta, métricas Prometheus, tracing OpenTelemetry. Nada é caixa-preta.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🔄</div>
+            <div class="feature-text">
+              <h4>Filas com Redis Streams</h4>
+              <p>Consumer groups com XACK explícito, deduplicação, replay após crash. Mensagem nenhuma se perde — nunca.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📅</div>
+            <div class="feature-text">
+              <h4>Agendamento Inteligente</h4>
+              <p>Agente dedicado marca, remarca e cancela compromissos com suporte a fuso horário e horários comerciais por tenant.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">⚡</div>
+            <div class="feature-text">
+              <h4>Async-First & Escalável</h4>
+              <p>Python 3.12 + httpx/asyncio. Workers stateless escaláveis horizontalmente. De 4 tenants a 1.000 sem mudar arquitetura.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ESCALA -->
+        <div class="product-scale">
+          <h3>O que acontece quando <span class="grad">escalar</span>?</h3>
+          <p>
+            A arquitetura foi desenhada para crescer: workers stateless que escalam horizontalmente com <strong>Redis consumer groups</strong>, migração de SQLite para <strong>PostgreSQL</strong> já prevista no código, suporte a múltiplos providers LLM com <strong>fallback automático</strong> (OpenAI, Anthropic, Bedrock), e deploy containerizado com <strong>Docker + Kubernetes</strong>. O caminho de 4 tenants para 1.000 é uma questão de infraestrutura — <strong>o código já suporta</strong>.
+          </p>
+          <p style="margin-top: 14px;">
+            Cada tenant novo é <strong>um único comando</strong>. Configuração de voz, idioma, horários, keywords, budget — tudo declarativo. A plataforma foi construída para que <strong>onboarding de cliente seja operação, não desenvolvimento</strong>.
+          </p>
+        </div>
+
+        <div class="product-note">
+          <strong>Nota:</strong> O código-fonte desta plataforma é proprietário e não está publicado neste portfolio. Os 21 projetos abaixo demonstram as skills técnicas que a tornaram possível — o produto é a prova de que funcionam juntas em produção real.
+        </div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section>
-  <div class="container">
-    <h2>⚙️ Engenharia de Agentes de IA</h2>
-    <p class="lead">Trilha agentes inteligentes, ML/DL/Fine-Tuning, MLOps & AIOps.</p>
-    <div class="grid">
-      <a class="card engenharia" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/13-agente-rag-langgraph" target="_blank" rel="noopener">
-        <div class="num">13 · N1</div><h3>Agente RAG (LangGraph)</h3>
-        <p>State machine com retrieve → answer → critic → refine e memória persistente.</p>
-        <div class="stack"><span class="tag">LangGraph</span><span class="tag">ChromaDB</span></div>
-        <span class="open">Abrir →</span>
-      </a>
-      <a class="card engenharia" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/14-multi-agente-pesquisa" target="_blank" rel="noopener">
-        <div class="num">14 · N1</div><h3>Multi-Agente Pesquisa</h3>
-        <p>Pesquisador + Crítico + Escritor produzindo um relatório técnico em markdown.</p>
-        <div class="stack"><span class="tag">LangGraph</span><span class="tag">DuckDuckGo</span></div>
-        <span class="open">Abrir →</span>
-      </a>
-      <a class="card engenharia" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/15-agente-codigo-sandbox" target="_blank" rel="noopener">
-        <div class="num">15 · N1</div><h3>Agente Código + Sandbox</h3>
-        <p>Loop write → run → fix em sandbox Docker isolado, com fallback subprocess.</p>
-        <div class="stack"><span class="tag">Docker</span><span class="tag">LangGraph</span></div>
-        <span class="open">Abrir →</span>
-      </a>
-      <a class="card engenharia" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/16-ml-churn-shap" target="_blank" rel="noopener">
-        <div class="num">16 · N2</div><h3>ML Churn + SHAP</h3>
-        <p>XGBoost + interpretabilidade SHAP + dashboard interativo com sliders.</p>
-        <div class="stack"><span class="tag">XGBoost</span><span class="tag">SHAP</span><span class="tag">Streamlit</span></div>
-        <span class="open">Abrir →</span>
-      </a>
-      <a class="card engenharia" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/17-cnn-pytorch-imagens" target="_blank" rel="noopener">
-        <div class="num">17 · N2</div><h3>CNN PyTorch (Transfer)</h3>
-        <p>ResNet18 transfer learning + export TorchScript para inferência portátil.</p>
-        <div class="stack"><span class="tag">PyTorch</span><span class="tag">torchvision</span></div>
-        <span class="open">Abrir →</span>
-      </a>
-      <a class="card engenharia" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/18-fine-tuning-lora" target="_blank" rel="noopener">
-        <div class="num">18 · N2</div><h3>Fine-Tuning com LoRA</h3>
-        <p>Fine-tuning quantizado 4-bit + adapter PEFT serializado para inferência.</p>
-        <div class="stack"><span class="tag">Transformers</span><span class="tag">PEFT</span><span class="tag">QLoRA</span></div>
-        <span class="open">Abrir →</span>
-      </a>
-      <a class="card engenharia" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/19-mlops-mlflow-dvc" target="_blank" rel="noopener">
-        <div class="num">19 · N3</div><h3>MLOps: MLflow + DVC</h3>
-        <p>Pipeline reprodutível com versionamento de dados, experiments e model registry.</p>
-        <div class="stack"><span class="tag">MLflow</span><span class="tag">DVC</span></div>
-        <span class="open">Abrir →</span>
-      </a>
-      <a class="card engenharia" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/20-aiops-langfuse" target="_blank" rel="noopener">
-        <div class="num">20 · N3</div><h3>AIOps: Langfuse</h3>
-        <p>Tracing estruturado de cadeia LLM com avaliação automática (fallback local).</p>
-        <div class="stack"><span class="tag">Langfuse</span><span class="tag">Observability</span></div>
-        <span class="open">Abrir →</span>
-      </a>
-      <a class="card engenharia" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/21-deploy-docker-k8s" target="_blank" rel="noopener">
-        <div class="num">21 · N3</div><h3>Deploy Docker + Kubernetes</h3>
-        <p>FastAPI → Dockerfile multi-stage → Helm chart → CI/CD GitHub Actions.</p>
-        <div class="stack"><span class="tag">Docker</span><span class="tag">K8s</span><span class="tag">Helm</span><span class="tag">GH Actions</span></div>
-        <span class="open">Abrir →</span>
-      </a>
+  <!-- PROJETOS -->
+  <section id="projetos">
+    <div class="container">
+
+      <!-- Fundamentos -->
+      <div class="projects-header reveal">
+        <div>
+          <div class="section-eyebrow">Base compartilhada</div>
+          <h2 class="section-title" style="margin-bottom:0">🌱 Fundamentos</h2>
+        </div>
+        <span class="track-label track-fund">3 projetos</span>
+      </div>
+      <p class="section-lead reveal">Cliente LLM unificado, análise exploratória com narrativa gerada por IA e framework de avaliação de prompts com métricas comparativas.</p>
+
+      <div class="grid reveal">
+        <div class="card fund">
+          <div class="card-accent"></div>
+          <div class="card-num">01 · Fundamentos</div>
+          <h3>Python API LLM Helper</h3>
+          <p>CLI que roteia tarefas — resumir, traduzir, gerar código — para OpenAI, Gemini ou Anthropic com auto-detect de provider.</p>
+          <div class="card-stack">
+            <span class="tag">Typer</span>
+            <span class="tag">OpenAI</span>
+            <span class="tag">Gemini</span>
+            <span class="tag">Anthropic</span>
+          </div>
+          <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/01-python-api-llm-helper" class="card-link" target="_blank" rel="noopener">Ver código →</a>
+        </div>
+
+        <div class="card fund">
+          <div class="card-accent"></div>
+          <div class="card-num">02 · Fundamentos</div>
+          <h3>Pandas IA Analista</h3>
+          <p>EDA automática em CSV com relatório narrativo gerado por LLM contendo 5 insights e próximos passos acionáveis.</p>
+          <div class="card-stack">
+            <span class="tag">Pandas</span>
+            <span class="tag">Matplotlib</span>
+            <span class="tag">LLM</span>
+          </div>
+          <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/02-pandas-ia-analista" class="card-link" target="_blank" rel="noopener">Ver código →</a>
+        </div>
+
+        <div class="card fund">
+          <div class="card-accent"></div>
+          <div class="card-num">03 · Fundamentos</div>
+          <h3>Eval Prompts Framework</h3>
+          <p>A/B test de prompts: roda variantes em paralelo, mede acurácia, latência e tokens, gera relatório markdown comparativo.</p>
+          <div class="card-stack">
+            <span class="tag">Pydantic</span>
+            <span class="tag">YAML</span>
+            <span class="tag">pytest</span>
+          </div>
+          <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/03-eval-prompts-framework" class="card-link" target="_blank" rel="noopener">Ver código →</a>
+        </div>
+      </div>
+
+      <!-- Especialista em IA -->
+      <div class="projects-header reveal" style="margin-top: 64px;">
+        <div>
+          <div class="section-eyebrow">N8N · Chatbots · RAG · Agentes · Cloud</div>
+          <h2 class="section-title" style="margin-bottom:0">🤖 Especialista em IA</h2>
+        </div>
+        <span class="track-label track-esp">9 projetos · N1 → N3</span>
+      </div>
+      <p class="section-lead reveal">Da automação com N8N ao deploy serverless na AWS. Cada nível adiciona uma camada: integração → agência → governança.</p>
+
+      <div class="grid reveal">
+        <div class="card esp">
+          <div class="card-accent"></div>
+          <div class="card-num">04 · N1</div>
+          <h3>n8n + Atendimento WhatsApp</h3>
+          <p>Workflow n8n conectado a API FastAPI que classifica intenção e gera resposta contextual para WhatsApp Business.</p>
+          <div class="card-stack">
+            <span class="tag">n8n</span>
+            <span class="tag">FastAPI</span>
+            <span class="tag">WhatsApp</span>
+          </div>
+          <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/04-n8n-atendimento-whatsapp" class="card-link" target="_blank" rel="noopener">Ver código →</a>
+        </div>
+
+        <div class="card esp">
+          <div class="card-accent"></div>
+          <div class="card-num">05 · N1</div>
+          <h3>Chatbot RAG sobre PDFs</h3>
+          <p>Interface Streamlit que indexa PDFs em ChromaDB e responde com citação de página e trecho exato da fonte.</p>
+          <div class="card-stack">
+            <span class="tag">Streamlit</span>
+            <span class="tag">LangChain</span>
+            <span class="tag">ChromaDB</span>
+          </div>
+          <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/05-chatbot-rag-pdfs" class="card-link" target="_blank" rel="noopener">Ver código →</a>
+        </div>
+
+        <div class="card esp">
+          <div class="card-accent"></div>
+          <div class="card-num">06 · N1</div>
+          <h3>RAG Multimodal (CLIP)</h3>
+          <p>Busca cross-modal: query por texto ou imagem usando embeddings CLIP. Um índice, dois tipos de entrada.</p>
+          <div class="card-stack">
+            <span class="tag">CLIP</span>
+            <span class="tag">ChromaDB</span>
+            <span class="tag">PyTorch</span>
+          </div>
+          <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/06-rag-multimodal-clip" class="card-link" target="_blank" rel="noopener">Ver código →</a>
+        </div>
+
+        <div class="card esp">
+          <div class="card-accent"></div>
+          <div class="card-num">07 · N2</div>
+          <h3>Agente Zero-Shot com Tools</h3>
+          <p>Loop ReAct minimalista com 3 ferramentas: calculadora, web search e execução Python segura.</p>
+          <div class="card-stack">
+            <span class="tag">ReAct</span>
+            <span class="tag">DuckDuckGo</span>
+            <span class="tag">numexpr</span>
+          </div>
+          <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/07-agente-tools-zero-shot" class="card-link" target="_blank" rel="noopener">Ver código →</a>
+        </div>
+
+        <div class="card esp">
+          <div class="card-accent"></div>
+          <div class="card-num">08 · N2</div>
+          <h3>Router Multi-Modelo</h3>
+          <p>Política declarativa em YAML que escolhe modelo por custo×qualidade com fallback automático e resiliente.</p>
+          <div class="card-stack">
+            <span class="tag">Pydantic</span>
+            <span class="tag">YAML policy</span>
+            <span class="tag">Fallback</span>
+          </div>
+          <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/08-router-multi-modelo" class="card-link" target="_blank" rel="noopener">Ver código →</a>
+        </div>
+
+        <div class="card esp">
+          <div class="card-accent"></div>
+          <div class="card-num">09 · N2</div>
+          <h3>Benchmark LLMs</h3>
+          <p>Comparativo lado-a-lado de OpenAI, Gemini, Claude e Llama local (via Ollama) com métricas de qualidade e custo.</p>
+          <div class="card-stack">
+            <span class="tag">Streamlit</span>
+            <span class="tag">Ollama</span>
+            <span class="tag">Benchmark</span>
+          </div>
+          <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/09-benchmark-llms" class="card-link" target="_blank" rel="noopener">Ver código →</a>
+        </div>
+
+        <div class="card esp">
+          <div class="card-accent"></div>
+          <div class="card-num">10 · N3</div>
+          <h3>Guardrails LLM</h3>
+          <p>PII redaction, filtro de toxicidade e audit log obrigatórios em toda chamada LLM. Middleware plugável.</p>
+          <div class="card-stack">
+            <span class="tag">Regex</span>
+            <span class="tag">Audit log</span>
+            <span class="tag">LGPD</span>
+          </div>
+          <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/10-guardrails-llm" class="card-link" target="_blank" rel="noopener">Ver código →</a>
+        </div>
+
+        <div class="card esp">
+          <div class="card-accent"></div>
+          <div class="card-num">11 · N3</div>
+          <h3>AWS Bedrock + Terraform</h3>
+          <p>Chatbot serverless: Lambda + API Gateway + Bedrock com infra como código e deploy reprodutível.</p>
+          <div class="card-stack">
+            <span class="tag">AWS</span>
+            <span class="tag">Terraform</span>
+            <span class="tag">Bedrock</span>
+            <span class="tag">Lambda</span>
+          </div>
+          <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/11-deploy-aws-bedrock" class="card-link" target="_blank" rel="noopener">Ver código →</a>
+        </div>
+
+        <div class="card esp">
+          <div class="card-accent"></div>
+          <div class="card-num">12 · N3</div>
+          <h3>LGPD Compliance Toolkit</h3>
+          <p>API com anonimização de dados, gestão de consentimento e log auditável com hash chain imutável.</p>
+          <div class="card-stack">
+            <span class="tag">FastAPI</span>
+            <span class="tag">Hash chain</span>
+            <span class="tag">LGPD</span>
+          </div>
+          <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/12-lgpd-compliance-toolkit" class="card-link" target="_blank" rel="noopener">Ver código →</a>
+        </div>
+      </div>
+
+      <!-- Engenharia de Agentes -->
+      <div class="projects-header reveal" style="margin-top: 64px;">
+        <div>
+          <div class="section-eyebrow">Agentes · ML/DL · Fine-Tuning · MLOps</div>
+          <h2 class="section-title" style="margin-bottom:0">⚙️ Engenharia de Agentes</h2>
+        </div>
+        <span class="track-label track-eng">9 projetos · N1 → N3</span>
+      </div>
+      <p class="section-lead reveal">State machines com LangGraph, Deep Learning com PyTorch, fine-tuning com LoRA e pipelines MLOps com rastreabilidade total.</p>
+
+      <div class="grid reveal">
+        <div class="card eng">
+          <div class="card-accent"></div>
+          <div class="card-num">13 · N1</div>
+          <h3>Agente RAG (LangGraph)</h3>
+          <p>State machine com ciclo retrieve → answer → critic → refine e memória persistente entre sessões.</p>
+          <div class="card-stack">
+            <span class="tag">LangGraph</span>
+            <span class="tag">ChromaDB</span>
+            <span class="tag">State machine</span>
+          </div>
+          <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/13-agente-rag-langgraph" class="card-link" target="_blank" rel="noopener">Ver código →</a>
+        </div>
+
+        <div class="card eng">
+          <div class="card-accent"></div>
+          <div class="card-num">14 · N1</div>
+          <h3>Multi-Agente Pesquisa</h3>
+          <p>Pesquisador + Crítico + Escritor colaborando para produzir relatório técnico em markdown com fontes.</p>
+          <div class="card-stack">
+            <span class="tag">LangGraph</span>
+            <span class="tag">DuckDuckGo</span>
+            <span class="tag">Multi-agent</span>
+          </div>
+          <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/14-multi-agente-pesquisa" class="card-link" target="_blank" rel="noopener">Ver código →</a>
+        </div>
+
+        <div class="card eng">
+          <div class="card-accent"></div>
+          <div class="card-num">15 · N1</div>
+          <h3>Agente Código + Sandbox</h3>
+          <p>Loop write → run → fix em sandbox Docker isolado com fallback subprocess. Execução segura de código gerado por LLM.</p>
+          <div class="card-stack">
+            <span class="tag">Docker</span>
+            <span class="tag">LangGraph</span>
+            <span class="tag">Sandbox</span>
+          </div>
+          <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/15-agente-codigo-sandbox" class="card-link" target="_blank" rel="noopener">Ver código →</a>
+        </div>
+
+        <div class="card eng">
+          <div class="card-accent"></div>
+          <div class="card-num">16 · N2</div>
+          <h3>ML Churn + SHAP</h3>
+          <p>XGBoost com interpretabilidade SHAP e dashboard interativo com sliders para simulação de cenários.</p>
+          <div class="card-stack">
+            <span class="tag">XGBoost</span>
+            <span class="tag">SHAP</span>
+            <span class="tag">Streamlit</span>
+          </div>
+          <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/16-ml-churn-shap" class="card-link" target="_blank" rel="noopener">Ver código →</a>
+        </div>
+
+        <div class="card eng">
+          <div class="card-accent"></div>
+          <div class="card-num">17 · N2</div>
+          <h3>CNN PyTorch (Transfer)</h3>
+          <p>ResNet18 transfer learning com export TorchScript para inferência portátil sem dependência de framework.</p>
+          <div class="card-stack">
+            <span class="tag">PyTorch</span>
+            <span class="tag">torchvision</span>
+            <span class="tag">TorchScript</span>
+          </div>
+          <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/17-cnn-pytorch-imagens" class="card-link" target="_blank" rel="noopener">Ver código →</a>
+        </div>
+
+        <div class="card eng">
+          <div class="card-accent"></div>
+          <div class="card-num">18 · N2</div>
+          <h3>Fine-Tuning com LoRA</h3>
+          <p>Fine-tuning quantizado 4-bit com adapter PEFT serializado. Treino local viável em GPUs consumer.</p>
+          <div class="card-stack">
+            <span class="tag">Transformers</span>
+            <span class="tag">PEFT</span>
+            <span class="tag">QLoRA</span>
+          </div>
+          <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/18-fine-tuning-lora" class="card-link" target="_blank" rel="noopener">Ver código →</a>
+        </div>
+
+        <div class="card eng">
+          <div class="card-accent"></div>
+          <div class="card-num">19 · N3</div>
+          <h3>MLOps: MLflow + DVC</h3>
+          <p>Pipeline reprodutível com versionamento de dados e modelos, experiment tracking e model registry centralizado.</p>
+          <div class="card-stack">
+            <span class="tag">MLflow</span>
+            <span class="tag">DVC</span>
+            <span class="tag">Registry</span>
+          </div>
+          <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/19-mlops-mlflow-dvc" class="card-link" target="_blank" rel="noopener">Ver código →</a>
+        </div>
+
+        <div class="card eng">
+          <div class="card-accent"></div>
+          <div class="card-num">20 · N3</div>
+          <h3>AIOps: Langfuse</h3>
+          <p>Tracing estruturado de cadeia LLM com avaliação automática de qualidade e fallback para avaliação local.</p>
+          <div class="card-stack">
+            <span class="tag">Langfuse</span>
+            <span class="tag">Tracing</span>
+            <span class="tag">Observability</span>
+          </div>
+          <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/20-aiops-langfuse" class="card-link" target="_blank" rel="noopener">Ver código →</a>
+        </div>
+
+        <div class="card eng">
+          <div class="card-accent"></div>
+          <div class="card-num">21 · N3</div>
+          <h3>Deploy Docker + Kubernetes</h3>
+          <p>FastAPI → Dockerfile multi-stage → Helm chart → CI/CD GitHub Actions. Do código ao cluster em um push.</p>
+          <div class="card-stack">
+            <span class="tag">Docker</span>
+            <span class="tag">K8s</span>
+            <span class="tag">Helm</span>
+            <span class="tag">GH Actions</span>
+          </div>
+          <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/21-deploy-docker-k8s" class="card-link" target="_blank" rel="noopener">Ver código →</a>
+        </div>
+      </div>
+
     </div>
-  </div>
-</section>
+  </section>
 
-<footer>
-  <div class="container">
-    Construído como portfólio das carreiras Alura · <a href="https://github.com/recuperarcontato4-prog/oaken-agentes">github.com/recuperarcontato4-prog/oaken-agentes</a>
-  </div>
-</footer>
+  <!-- DIFERENCIAIS -->
+  <section id="diferenciais" style="background: var(--bg-2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div class="container">
+      <div class="section-eyebrow reveal">Por que contratar</div>
+      <h2 class="section-title reveal">Não é só portfólio de curso.</h2>
+      <p class="section-lead reveal">Estes projetos existem porque têm um produto real por trás. Cada skill foi construída com um objetivo prático.</p>
 
+      <div class="diff-grid reveal">
+        <div class="diff-card">
+          <div class="diff-icon">🏭</div>
+          <h3>Produto em produção</h3>
+          <p>Oaken IA roda com clientes reais — WhatsApp, agendamento, atendimento 24/7. O portfólio reflete skills aplicadas, não exercícios teóricos.</p>
+        </div>
+        <div class="diff-card">
+          <div class="diff-icon">⚡</div>
+          <h3>Stack completa</h3>
+          <p>Da prompt de LLM ao cluster Kubernetes. Sem gaps: RAG, Fine-Tuning, MLOps, Cloud, Guardrails, Compliance — tudo coberto.</p>
+        </div>
+        <div class="diff-card">
+          <div class="diff-icon">🔍</div>
+          <h3>Código auditável</h3>
+          <p>Cada projeto tem README objetivo, roda com um comando e está disponível para revisão técnica no GitHub. Sem caixas-pretas.</p>
+        </div>
+        <div class="diff-card">
+          <div class="diff-icon">📐</div>
+          <h3>Progressão estruturada</h3>
+          <p>Projetos organizados em N1→N3 por área: fundamentos sólidos antes de complexidade. Não é aleatório — é uma trilha de maturidade.</p>
+        </div>
+        <div class="diff-card">
+          <div class="diff-icon">🛡️</div>
+          <h3>Governança & Compliance</h3>
+          <p>LGPD, audit logs, PII redaction, Guardrails — porque IA em produção precisa de segurança, não só de acurácia.</p>
+        </div>
+        <div class="diff-card">
+          <div class="diff-icon">🔄</div>
+          <h3>Visão end-to-end</h3>
+          <p>Do problema do negócio ao sistema rodando. Não só modela — integra, testa, observa, mantém. Pensa como engenheiro.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA CONTATO -->
+  <section class="cta-section" id="contato">
+    <div class="container">
+      <h2>Pronto para trabalhar <span class="grad">com IA de verdade?</span></h2>
+      <p>Disponível para projetos, contratação CLT/PJ ou consultoria em automação e agentes inteligentes.</p>
+      <div class="cta-actions">
+        <a href="https://github.com/recuperarcontato4-prog/oaken-agentes" class="btn btn-primary" target="_blank" rel="noopener">
+          ↗ Ver projetos no GitHub
+        </a>
+        <a href="https://www.linkedin.com/feed/" class="btn" target="_blank" rel="noopener">
+          💼 LinkedIn
+        </a>
+        <a href="mailto:isaacoaken@gmail.com" class="btn btn-ghost">
+          ✉️ Enviar email
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand"><span>IA</span> & Agentes · Portfolio</div>
+        <ul class="footer-links">
+          <li><a href="https://github.com/recuperarcontato4-prog/oaken-agentes" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="https://github.com/recuperarcontato4-prog/oaken-agentes/blob/main/docs/ROADMAP.md" target="_blank" rel="noopener">Roadmap</a></li>
+          <li><a href="./pito-presentation.html">Oaken IA</a></li>
+        </ul>
+      </div>
+      <p class="footer-copy">Construído com foco em produção real. Todos os projetos estão disponíveis para revisão técnica.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
 </body>
 </html>
