@@ -1,0 +1,6 @@
+apiVersion: v2
+name: oaken-agent
+description: Helm chart para o agente Oaken
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
