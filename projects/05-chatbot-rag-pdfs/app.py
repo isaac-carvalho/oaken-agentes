@@ -16,15 +16,54 @@ CHROMA_DIR = Path(__file__).parent / "chroma"
 COLLECTION = "pdfs"
 
 
+class _HashEmbedder:
+    """Fallback offline: embedding por feature hashing (bag-of-words). Não substitui
+    um embedder semântico real, mas garante o pipeline RAG funcional sem internet."""
+
+    def __init__(self, dim: int = 384) -> None:
+        self.dim = dim
+
+    def name(self) -> str:
+        return "hash-embedder-384"
+
+    def _embed_one(self, text: str) -> list[float]:
+        import hashlib
+
+        v = [0.0] * self.dim
+        for word in text.lower().split():
+            idx = int(hashlib.md5(word.encode()).hexdigest(), 16) % self.dim
+            v[idx] += 1.0
+        norm = sum(x * x for x in v) ** 0.5
+        return [x / norm for x in v] if norm > 0 else v
+
+    def __call__(self, input):
+        return [self._embed_one(t) for t in input]
+
+    def embed_documents(self, input):
+        return self.__call__(input)
+
+    def embed_query(self, input):
+        if isinstance(input, str):
+            return self._embed_one(input)
+        return [self._embed_one(t) for t in input]
+
+
 @st.cache_resource
 def get_collection():
     import chromadb
-    from chromadb.utils import embedding_functions
 
     client = chromadb.PersistentClient(path=str(CHROMA_DIR))
-    embedder = embedding_functions.SentenceTransformerEmbeddingFunction(
-        model_name="all-MiniLM-L6-v2"
-    )
+    embedder = None
+    try:
+        from chromadb.utils import embedding_functions
+
+        embedder = embedding_functions.SentenceTransformerEmbeddingFunction(
+            model_name="all-MiniLM-L6-v2"
+        )
+        # Força carregar o modelo agora, para falhar cedo se não houver internet.
+        embedder(["warmup"])
+    except Exception:
+        embedder = _HashEmbedder()
     return client.get_or_create_collection(COLLECTION, embedding_function=embedder)
 
 
