@@ -9,7 +9,7 @@ RUN useradd -m -u 1000 oaken
 WORKDIR /app
 COPY --from=builder /root/.local /home/oaken/.local
 COPY app.py ./
-COPY ../_shared /app/projects/_shared
+COPY _shared ./_shared
 ENV PATH=/home/oaken/.local/bin:$PATH \
     PYTHONUNBUFFERED=1 \
     PYTHONPATH=/app

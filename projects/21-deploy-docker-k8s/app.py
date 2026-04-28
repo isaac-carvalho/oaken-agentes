@@ -7,10 +7,9 @@ from pathlib import Path
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT))
-
-from projects._shared import get_default_client  # noqa: E402
+# Self-contained: _shared está no mesmo diretório (cópia local para o container).
+sys.path.insert(0, str(Path(__file__).parent))
+from _shared import get_default_client  # noqa: E402
 
 app = FastAPI(title="Oaken Agent", version="1.0.0")
 _llm = get_default_client()
