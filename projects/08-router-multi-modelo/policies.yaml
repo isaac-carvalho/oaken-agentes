@@ -1,0 +1,34 @@
+defaults:
+  task: simple
+  max_cost_usd: 0.01
+
+models:
+  - name: gpt-4o-mini
+    provider: openai
+    cost_per_1k_in: 0.00015
+    cost_per_1k_out: 0.0006
+    quality: 0.7
+  - name: gemini-1.5-flash
+    provider: gemini
+    cost_per_1k_in: 0.000075
+    cost_per_1k_out: 0.0003
+    quality: 0.65
+  - name: claude-haiku-4-5
+    provider: anthropic
+    cost_per_1k_in: 0.001
+    cost_per_1k_out: 0.005
+    quality: 0.75
+  - name: gpt-4o
+    provider: openai
+    cost_per_1k_in: 0.005
+    cost_per_1k_out: 0.015
+    quality: 0.92
+  - name: claude-sonnet-4-6
+    provider: anthropic
+    cost_per_1k_in: 0.003
+    cost_per_1k_out: 0.015
+    quality: 0.95
+
+routing:
+  simple: cheapest_within_budget
+  complex: highest_quality_within_budget
