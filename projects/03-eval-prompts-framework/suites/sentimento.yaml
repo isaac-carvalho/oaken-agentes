@@ -1,0 +1,15 @@
+name: sentimento_pt
+prompts:
+  - id: v1
+    system: "Classifique como POSITIVO ou NEGATIVO."
+  - id: v2
+    system: "Você é um classificador. Devolva apenas a palavra POSITIVO ou NEGATIVO. Sem texto extra."
+cases:
+  - input: "Adorei o atendimento, voltarei mais vezes!"
+    expected: "POSITIVO"
+  - input: "Produto horrível, demorou e veio quebrado."
+    expected: "NEGATIVO"
+  - input: "Excelente custo-benefício, super recomendo."
+    expected: "POSITIVO"
+  - input: "Péssima experiência, não compro nunca mais."
+    expected: "NEGATIVO"

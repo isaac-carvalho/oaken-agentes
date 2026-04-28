@@ -1,0 +1,29 @@
+name: build-and-push
+on:
+  push:
+    branches: [main]
+    paths: ["projects/21-deploy-docker-k8s/**"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build & push
+        uses: docker/build-push-action@v5
+        with:
+          context: projects/21-deploy-docker-k8s
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/oaken-agent:latest
+            ghcr.io/${{ github.repository }}/oaken-agent:${{ github.sha }}

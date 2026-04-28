@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oaken Agentes — Portfólio de IA & Agentes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0d14; --bg-2:#11151f; --card:#161b27; --border:#222a3a;
+  --text:#e6ebf5; --muted:#8a93a6; --accent:#4f8cff; --accent-2:#a44dff;
+  --green:#22c55e; --orange:#f97316;
+}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+
+header{padding:80px 0 48px;background:radial-gradient(ellipse at top,rgba(79,140,255,.18),transparent 70%)}
+header .eyebrow{font-family:'DM Sans';font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-size:13px;margin-bottom:14px}
+header h1{font-family:'DM Sans';font-size:clamp(36px,5vw,56px);font-weight:800;line-height:1.1;margin-bottom:18px}
+header h1 span{background:linear-gradient(90deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+header p{color:var(--muted);font-size:18px;max-width:720px;margin-bottom:28px}
+header .cta{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:10px;font-weight:600;border:1px solid var(--border);background:var(--card);color:var(--text);transition:.15s ease}
+.btn:hover{border-color:var(--accent);text-decoration:none;transform:translateY(-1px)}
+.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));border:none}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:48px}
+.stats .stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px}
+.stats .num{font-family:'DM Sans';font-size:30px;font-weight:800;color:var(--text)}
+.stats .lbl{color:var(--muted);font-size:13px;margin-top:4px;text-transform:uppercase;letter-spacing:.1em}
+
+section{padding:64px 0;border-top:1px solid var(--border)}
+section h2{font-family:'DM Sans';font-size:28px;font-weight:700;margin-bottom:8px}
+section .lead{color:var(--muted);margin-bottom:32px;max-width:700px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;transition:.15s ease;display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden}
+.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.card .num{font-family:'DM Sans';font-weight:800;font-size:13px;color:var(--accent);letter-spacing:.1em}
+.card h3{font-family:'DM Sans';font-size:18px;font-weight:700}
+.card p{color:var(--muted);font-size:14px;flex:1}
+.card .stack{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.tag{font-size:11px;padding:3px 8px;background:var(--bg-2);border:1px solid var(--border);border-radius:999px;color:var(--muted)}
+.card .open{font-size:13px;font-weight:600;color:var(--accent)}
+.card.fund::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,#22c55e,#4f8cff)}
+.card.especialista::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,#4f8cff,#a44dff)}
+.card.engenharia::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,#a44dff,#f97316)}
+
+footer{padding:40px 0 60px;color:var(--muted);font-size:14px;text-align:center;border-top:1px solid var(--border)}
+footer a{color:var(--text)}
+
+@media(max-width:680px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="eyebrow">Portfólio · Carreiras Alura</div>
+    <h1>21 projetos de <span>IA & Agentes</span> rodando ponta-a-ponta</h1>
+    <p>Construído em cima das carreiras <strong>Especialista em IA</strong> e <strong>Engenharia de Agentes de IA</strong>. Cada projeto roda com um único comando, tem README objetivo e foca em demonstrar uma combinação distinta de skills do mercado.</p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/recuperarcontato4-prog/oaken-agentes">↗ Repositório no GitHub</a>
+      <a class="btn" href="https://github.com/recuperarcontato4-prog/oaken-agentes/blob/main/docs/ROADMAP.md" target="_blank" rel="noopener">📍 Roadmap & skills</a>
+      <a class="btn" href="./pito-presentation.html">🟧 Landing Oaken IA</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num">21</div><div class="lbl">projetos</div></div>
+      <div class="stat"><div class="num">2</div><div class="lbl">carreiras Alura</div></div>
+      <div class="stat"><div class="num">15+</div><div class="lbl">stacks distintas</div></div>
+      <div class="stat"><div class="num">100%</div><div class="lbl">código aberto</div></div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="container">
+    <h2>🌱 Fundamentos</h2>
+    <p class="lead">Base compartilhada entre as duas carreiras. Cliente LLM unificado, EDA com narrativa de IA e framework de avaliação de prompts.</p>
+    <div class="grid">
+      <a class="card fund" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/01-python-api-llm-helper" target="_blank" rel="noopener">
+        <div class="num">01</div><h3>Python API LLM Helper</h3>
+        <p>CLI que roteia tarefas (resumir, traduzir, gerar código) para OpenAI / Gemini / Anthropic com auto-detect.</p>
+        <div class="stack"><span class="tag">Typer</span><span class="tag">OpenAI</span><span class="tag">Gemini</span><span class="tag">Anthropic</span></div>
+        <span class="open">Abrir →</span>
+      </a>
+      <a class="card fund" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/02-pandas-ia-analista" target="_blank" rel="noopener">
+        <div class="num">02</div><h3>Pandas IA Analista</h3>
+        <p>EDA automática num CSV + relatório narrativo gerado por LLM com 5 insights e próximos passos.</p>
+        <div class="stack"><span class="tag">Pandas</span><span class="tag">Matplotlib</span><span class="tag">LLM</span></div>
+        <span class="open">Abrir →</span>
+      </a>
+      <a class="card fund" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/03-eval-prompts-framework" target="_blank" rel="noopener">
+        <div class="num">03</div><h3>Eval Prompts Framework</h3>
+        <p>A/B test de prompts: roda variantes, mede acurácia, latência e tokens, gera relatório markdown.</p>
+        <div class="stack"><span class="tag">Pydantic</span><span class="tag">YAML</span><span class="tag">pytest</span></div>
+        <span class="open">Abrir →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2>🤖 Especialista em IA</h2>
+    <p class="lead">Trilha N8N, Chatbots, RAG, Agentes & Modelos, Governança e Cloud.</p>
+    <div class="grid">
+      <a class="card especialista" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/04-n8n-atendimento-whatsapp" target="_blank" rel="noopener">
+        <div class="num">04 · N1</div><h3>n8n + Atendimento WhatsApp</h3>
+        <p>Workflow n8n + API FastAPI que classifica intenção e gera resposta para WhatsApp Business.</p>
+        <div class="stack"><span class="tag">n8n</span><span class="tag">FastAPI</span></div>
+        <span class="open">Abrir →</span>
+      </a>
+      <a class="card especialista" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/05-chatbot-rag-pdfs" target="_blank" rel="noopener">
+        <div class="num">05 · N1</div><h3>Chatbot RAG sobre PDFs</h3>
+        <p>Streamlit indexando PDFs em ChromaDB; respostas com citação de página + trecho.</p>
+        <div class="stack"><span class="tag">Streamlit</span><span class="tag">LangChain</span><span class="tag">ChromaDB</span></div>
+        <span class="open">Abrir →</span>
+      </a>
+      <a class="card especialista" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/06-rag-multimodal-clip" target="_blank" rel="noopener">
+        <div class="num">06 · N1</div><h3>RAG Multimodal (CLIP)</h3>
+        <p>Busca cross-modal: query por texto OU imagem, indexação com embeddings CLIP.</p>
+        <div class="stack"><span class="tag">CLIP</span><span class="tag">ChromaDB</span><span class="tag">PyTorch</span></div>
+        <span class="open">Abrir →</span>
+      </a>
+      <a class="card especialista" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/07-agente-tools-zero-shot" target="_blank" rel="noopener">
+        <div class="num">07 · N2</div><h3>Agente Zero-Shot com Tools</h3>
+        <p>Loop ReAct minimalista com 3 tools: calc, web search e execução Python.</p>
+        <div class="stack"><span class="tag">ReAct</span><span class="tag">DuckDuckGo</span><span class="tag">numexpr</span></div>
+        <span class="open">Abrir →</span>
+      </a>
+      <a class="card especialista" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/08-router-multi-modelo" target="_blank" rel="noopener">
+        <div class="num">08 · N2</div><h3>Router Multi-Modelo</h3>
+        <p>Política declarativa que escolhe modelo por custo×qualidade, com fallback resiliente.</p>
+        <div class="stack"><span class="tag">Pydantic</span><span class="tag">YAML policy</span></div>
+        <span class="open">Abrir →</span>
+      </a>
+      <a class="card especialista" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/09-benchmark-llms" target="_blank" rel="noopener">
+        <div class="num">09 · N2</div><h3>Benchmark LLMs</h3>
+        <p>Comparativo lado-a-lado de OpenAI, Gemini, Claude e Llama (via Ollama).</p>
+        <div class="stack"><span class="tag">Streamlit</span><span class="tag">Ollama</span></div>
+        <span class="open">Abrir →</span>
+      </a>
+      <a class="card especialista" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/10-guardrails-llm" target="_blank" rel="noopener">
+        <div class="num">10 · N3</div><h3>Guardrails LLM</h3>
+        <p>PII redaction, filtro de toxicidade e audit log obrigatórios em qualquer chamada LLM.</p>
+        <div class="stack"><span class="tag">Regex</span><span class="tag">Audit log</span></div>
+        <span class="open">Abrir →</span>
+      </a>
+      <a class="card especialista" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/11-deploy-aws-bedrock" target="_blank" rel="noopener">
+        <div class="num">11 · N3</div><h3>AWS Bedrock + Terraform</h3>
+        <p>Chatbot serverless: Lambda + API Gateway + Bedrock, infra como código.</p>
+        <div class="stack"><span class="tag">AWS</span><span class="tag">Terraform</span><span class="tag">Bedrock</span></div>
+        <span class="open">Abrir →</span>
+      </a>
+      <a class="card especialista" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/12-lgpd-compliance-toolkit" target="_blank" rel="noopener">
+        <div class="num">12 · N3</div><h3>LGPD Compliance Toolkit</h3>
+        <p>API com anonimização, gestão de consentimento e log auditável (hash chain).</p>
+        <div class="stack"><span class="tag">FastAPI</span><span class="tag">Hash chain</span></div>
+        <span class="open">Abrir →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2>⚙️ Engenharia de Agentes de IA</h2>
+    <p class="lead">Trilha agentes inteligentes, ML/DL/Fine-Tuning, MLOps & AIOps.</p>
+    <div class="grid">
+      <a class="card engenharia" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/13-agente-rag-langgraph" target="_blank" rel="noopener">
+        <div class="num">13 · N1</div><h3>Agente RAG (LangGraph)</h3>
+        <p>State machine com retrieve → answer → critic → refine e memória persistente.</p>
+        <div class="stack"><span class="tag">LangGraph</span><span class="tag">ChromaDB</span></div>
+        <span class="open">Abrir →</span>
+      </a>
+      <a class="card engenharia" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/14-multi-agente-pesquisa" target="_blank" rel="noopener">
+        <div class="num">14 · N1</div><h3>Multi-Agente Pesquisa</h3>
+        <p>Pesquisador + Crítico + Escritor produzindo um relatório técnico em markdown.</p>
+        <div class="stack"><span class="tag">LangGraph</span><span class="tag">DuckDuckGo</span></div>
+        <span class="open">Abrir →</span>
+      </a>
+      <a class="card engenharia" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/15-agente-codigo-sandbox" target="_blank" rel="noopener">
+        <div class="num">15 · N1</div><h3>Agente Código + Sandbox</h3>
+        <p>Loop write → run → fix em sandbox Docker isolado, com fallback subprocess.</p>
+        <div class="stack"><span class="tag">Docker</span><span class="tag">LangGraph</span></div>
+        <span class="open">Abrir →</span>
+      </a>
+      <a class="card engenharia" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/16-ml-churn-shap" target="_blank" rel="noopener">
+        <div class="num">16 · N2</div><h3>ML Churn + SHAP</h3>
+        <p>XGBoost + interpretabilidade SHAP + dashboard interativo com sliders.</p>
+        <div class="stack"><span class="tag">XGBoost</span><span class="tag">SHAP</span><span class="tag">Streamlit</span></div>
+        <span class="open">Abrir →</span>
+      </a>
+      <a class="card engenharia" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/17-cnn-pytorch-imagens" target="_blank" rel="noopener">
+        <div class="num">17 · N2</div><h3>CNN PyTorch (Transfer)</h3>
+        <p>ResNet18 transfer learning + export TorchScript para inferência portátil.</p>
+        <div class="stack"><span class="tag">PyTorch</span><span class="tag">torchvision</span></div>
+        <span class="open">Abrir →</span>
+      </a>
+      <a class="card engenharia" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/18-fine-tuning-lora" target="_blank" rel="noopener">
+        <div class="num">18 · N2</div><h3>Fine-Tuning com LoRA</h3>
+        <p>Fine-tuning quantizado 4-bit + adapter PEFT serializado para inferência.</p>
+        <div class="stack"><span class="tag">Transformers</span><span class="tag">PEFT</span><span class="tag">QLoRA</span></div>
+        <span class="open">Abrir →</span>
+      </a>
+      <a class="card engenharia" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/19-mlops-mlflow-dvc" target="_blank" rel="noopener">
+        <div class="num">19 · N3</div><h3>MLOps: MLflow + DVC</h3>
+        <p>Pipeline reprodutível com versionamento de dados, experiments e model registry.</p>
+        <div class="stack"><span class="tag">MLflow</span><span class="tag">DVC</span></div>
+        <span class="open">Abrir →</span>
+      </a>
+      <a class="card engenharia" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/20-aiops-langfuse" target="_blank" rel="noopener">
+        <div class="num">20 · N3</div><h3>AIOps: Langfuse</h3>
+        <p>Tracing estruturado de cadeia LLM com avaliação automática (fallback local).</p>
+        <div class="stack"><span class="tag">Langfuse</span><span class="tag">Observability</span></div>
+        <span class="open">Abrir →</span>
+      </a>
+      <a class="card engenharia" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/21-deploy-docker-k8s" target="_blank" rel="noopener">
+        <div class="num">21 · N3</div><h3>Deploy Docker + Kubernetes</h3>
+        <p>FastAPI → Dockerfile multi-stage → Helm chart → CI/CD GitHub Actions.</p>
+        <div class="stack"><span class="tag">Docker</span><span class="tag">K8s</span><span class="tag">Helm</span><span class="tag">GH Actions</span></div>
+        <span class="open">Abrir →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    Construído como portfólio das carreiras Alura · <a href="https://github.com/recuperarcontato4-prog/oaken-agentes">github.com/recuperarcontato4-prog/oaken-agentes</a>
+  </div>
+</footer>
+
+</body>
+</html>

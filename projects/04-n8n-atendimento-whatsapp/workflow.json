@@ -1,0 +1,49 @@
+{
+  "name": "WhatsApp Atendimento + IA",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp-incoming",
+        "responseMode": "responseNode"
+      },
+      "id": "webhook-1",
+      "name": "Webhook WhatsApp",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8000/atender",
+        "method": "POST",
+        "jsonParameters": true,
+        "bodyParametersJson": "={\n  \"telefone\": $json[\"From\"],\n  \"mensagem\": $json[\"Body\"]\n}",
+        "options": {}
+      },
+      "id": "http-1",
+      "name": "Chama API IA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"to\": $json[\"telefone\"],\n  \"text\": $json[\"resposta\"],\n  \"intent\": $json[\"intencao\"]\n}"
+      },
+      "id": "resp-1",
+      "name": "Resposta",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [800, 300]
+    }
+  ],
+  "connections": {
+    "Webhook WhatsApp": {"main": [[{"node": "Chama API IA", "type": "main", "index": 0}]]},
+    "Chama API IA": {"main": [[{"node": "Resposta", "type": "main", "index": 0}]]}
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "v1"
+}

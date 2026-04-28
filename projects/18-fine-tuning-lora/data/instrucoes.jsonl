@@ -1,0 +1,5 @@
+{"instruction": "O que é LoRA?", "response": "LoRA (Low-Rank Adaptation) treina apenas pequenas matrizes de baixa rank, congelando o modelo base. Reduz drasticamente memória e tempo de fine-tuning."}
+{"instruction": "Explique RAG em uma frase.", "response": "RAG (Retrieval-Augmented Generation) combina busca semântica em uma base de documentos com geração por LLM, ancorando as respostas em fontes."}
+{"instruction": "Quando usar fine-tuning vs RAG?", "response": "Use RAG para conhecimento factual atualizável; use fine-tuning para mudar estilo, formato de saída ou tarefas muito específicas que não cabem no contexto."}
+{"instruction": "O que é quantização 4-bit?", "response": "Reduz precisão dos pesos do modelo de 16/32 bits para 4 bits, cortando uso de memória em ~4-8x com perda mínima de qualidade quando feito com QLoRA."}
+{"instruction": "O que é LangGraph?", "response": "Framework para construir agentes como máquinas de estado explícitas, com nós, arestas e checkpoints. Bom para fluxos com loops e auto-correção."}
