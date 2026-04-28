@@ -15,7 +15,7 @@ sys.path.insert(0, str(ROOT))
 from projects._shared import get_default_client  # noqa: E402
 
 CHROMA_DIR = Path(__file__).parent / "chroma"
-COLLECTION = "kb"
+COLLECTION = "knowledge"
 
 
 class State(TypedDict):

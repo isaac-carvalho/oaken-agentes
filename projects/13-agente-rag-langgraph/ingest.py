@@ -9,7 +9,7 @@ import typer
 from embedder import get_embedder
 
 CHROMA_DIR = Path(__file__).parent / "chroma"
-COLLECTION = "kb"
+COLLECTION = "knowledge"
 
 app = typer.Typer()
 
