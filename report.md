@@ -9,11 +9,11 @@
 
 | Severidade | Total | Resolvido |
 |---|---|---|
-| 🔴 CRÍTICO | 2 | ✅ **2** |
-| 🟠 ALTO | 5 | ✅ **5** |
-| 🟡 MÉDIO | 8 | ⚠️ **1 parcial** (MÉDIO-8 fix junto com ALTO-2) |
-| 🟢 BAIXO | 6 | ⏳ pendente (sugestões) |
-| **Total de achados** | **21** | **8 fixes aplicados** |
+| 🔴 CRÍTICO | 2 | ✅ **2/2** |
+| 🟠 ALTO | 5 | ✅ **5/5** |
+| 🟡 MÉDIO | 8 | ✅ **8/8** |
+| 🟢 BAIXO | 6 | ✅ **5/5** + 1 N/A (BAIXO-6 = backup, não aplicável a portfolio) |
+| **Total de achados** | **21** | **20 fixes + 1 N/A** 🎉 |
 
 **Pontos fortes do projeto:**
 - ✅ `.env` no `.gitignore` (e `.env.*` também)
@@ -143,7 +143,7 @@ envFrom:
 
 ## 🟡 Achados Médios
 
-### [MÉDIO-1] Sem validação de tamanho/formato em endpoints
+### [MÉDIO-1] ✅ RESOLVIDO · Sem validação de tamanho/formato em endpoints
 **Categoria:** 3 · CÓDIGO
 **Arquivos:** `projects/12-lgpd-compliance-toolkit/api.py:30-32, 94`, `projects/21-deploy-docker-k8s/app.py:18-19`
 **Impacto:** `titular_id`, `texto`, `prompt` aceitam qualquer tamanho/charset. Texto de 100MB → DoS por consumo de memória.
@@ -155,13 +155,13 @@ class Pergunta(BaseModel):
     prompt: str = Field(max_length=4000, min_length=1)
 ```
 
-### [MÉDIO-2] Sem lock file de dependências
+### [MÉDIO-2] ✅ RESOLVIDO · Sem lock file de dependências
 **Categoria:** 2 · DEPENDÊNCIAS
 **Arquivos:** todos os `projects/**/requirements.txt`
 **Impacto:** Versões em `>=` são pegas no momento do install — mesmo `pip install` em duas datas pode dar versões diferentes (incluindo CVEs introduzidos). Supply-chain attack mais difícil de detectar.
 **Fix:** gerar `requirements.lock` via `pip-compile` (pip-tools) ou migrar para `uv` / `poetry`.
 
-### [MÉDIO-3] Sem scan de CVEs no CI
+### [MÉDIO-3] ✅ RESOLVIDO · Sem scan de CVEs no CI
 **Categoria:** 2 · DEPENDÊNCIAS
 **Arquivo:** `projects/21-deploy-docker-k8s/.github/workflows/ci.yml`
 **Fix:** adicionar job `pip-audit` antes do build:
@@ -172,7 +172,7 @@ class Pergunta(BaseModel):
     pip-audit -r projects/21-deploy-docker-k8s/requirements.txt
 ```
 
-### [MÉDIO-4] `index.html` sem CSP meta-tag
+### [MÉDIO-4] ✅ RESOLVIDO · `index.html` sem CSP meta-tag
 **Categoria:** 4 · INFRA
 **Arquivo:** `index.html`
 **Fix:** adicionar no `<head>`:
@@ -182,18 +182,18 @@ class Pergunta(BaseModel):
                font-src 'self' fonts.gstatic.com; img-src 'self' data:;">
 ```
 
-### [MÉDIO-5] `pickle`/`joblib` é insecure deserialization
+### [MÉDIO-5] ✅ RESOLVIDO · `pickle`/`joblib` é insecure deserialization
 **Categoria:** 3 · CÓDIGO
 **Arquivos:** `projects/16-ml-churn-shap/train.py` (`joblib.dump`), `projects/19-mlops-mlflow-dvc` (MLflow já avisa)
 **Impacto:** Quem carregar um `modelo.pkl` malicioso é vítima de RCE. Risco crítico se modelos forem distribuídos publicamente; baixo se ficarem só no repo.
 **Fix:** documentar no README que pickles **não** devem ser carregados de fontes não-confiáveis; opcionalmente migrar para `skops` (formato seguro para sklearn).
 
-### [MÉDIO-6] Tool `web` do agente 07 sem timeout no DDGS
+### [MÉDIO-6] ✅ RESOLVIDO · Tool `web` do agente 07 sem timeout no DDGS
 **Categoria:** 3 · CÓDIGO
 **Arquivo:** `projects/07-agente-tools-zero-shot/main.py:47-49`
 **Fix:** envolver com `concurrent.futures` + timeout, ou usar `requests` direto com `timeout=5`.
 
-### [MÉDIO-7] Endpoint `/chat` (proj 21) sem autenticação
+### [MÉDIO-7] ✅ RESOLVIDO · Endpoint `/chat` (proj 21) sem autenticação
 **Categoria:** 4 · INFRA / 5 · IAM
 **Arquivo:** `projects/21-deploy-docker-k8s/app.py:41-44`
 **Impacto:** Qualquer um chama → consome tokens OpenAI da sua chave. Custo financeiro real.
@@ -221,34 +221,34 @@ def chat(p: Pergunta, x_api_key: str = Header(...)):
 
 ## 🟢 Achados Baixos
 
-### [BAIXO-1] GH Actions sem pin em SHA
+### [BAIXO-1] ✅ RESOLVIDO · GH Actions sem pin em SHA
 **Categoria:** 2 · DEPENDÊNCIAS (supply-chain)
 **Arquivo:** `projects/21-deploy-docker-k8s/.github/workflows/ci.yml`
 **Atual:** `actions/checkout@v4`, `docker/login-action@v3`, `docker/build-push-action@v5`.
 **Fix:** pin em SHA imutável (`actions/checkout@b4ffde6...`) — proteção contra repos comprometidos retroativamente.
 
-### [BAIXO-2] Sem `.dockerignore`
+### [BAIXO-2] ✅ RESOLVIDO · Sem `.dockerignore`
 **Categoria:** 4 · INFRA
 **Arquivo:** `projects/21-deploy-docker-k8s/`
 **Impacto:** `docker build .` pode acabar copiando `.git/`, `tests/`, `.venv/` se existir. Imagem maior + risco de copiar `.env` por engano.
 **Fix:** criar `.dockerignore` com `.git`, `.venv`, `__pycache__`, `*.pyc`, `tests/`, `.env`.
 
-### [BAIXO-3] Sem request ID / correlation no logging
+### [BAIXO-3] ✅ RESOLVIDO · Sem request ID / correlation no logging
 **Categoria:** 7 · LOGS
 **Impacto:** logs do FastAPI não incluem request ID — debugging em produção fica difícil.
 **Fix:** middleware que gera `X-Request-Id` e injeta em `contextvars`.
 
-### [BAIXO-4] Sem política de privacidade
+### [BAIXO-4] ✅ RESOLVIDO · Sem política de privacidade
 **Categoria:** 6 · LGPD
 **Impacto:** se um dia esses agentes forem expostos a usuários reais, falta texto formal de consentimento + bases legais.
 **Fix:** template em `docs/PRIVACY.md` (não bloqueante para portfólio).
 
-### [BAIXO-5] LGPD toolkit cobre apenas "esquecimento" — falta acesso e portabilidade
+### [BAIXO-5] ✅ RESOLVIDO · LGPD toolkit cobre apenas "esquecimento" — falta acesso e portabilidade
 **Categoria:** 6 · LGPD
 **Arquivo:** `projects/12-lgpd-compliance-toolkit/api.py`
 **Fix:** adicionar `GET /titular/{id}/dados` (direito de acesso) e `GET /titular/{id}/export` (portabilidade — JSON/CSV).
 
-### [BAIXO-6] BACKUP / DR
+### [BAIXO-6] ⚠️ N/A · BACKUP / DR
 **Categoria:** 8 · BACKUP
 **Status:** N/A para portfólio educacional (sem dados de produção). Se um dia subir LGPD toolkit em produção, configurar backup do `consent.json` + `audit_chain.log`.
 
@@ -267,21 +267,33 @@ def chat(p: Pergunta, x_api_key: str = Header(...)):
 | 7 | LOGS | 1 baixo | ✅ audit chain |
 | 8 | BACKUP | N/A | ✅ contexto |
 
-## Próximos passos sugeridos
+## Status final
 
-Ordem de prioridade para fix (impacto × esforço):
-1. 🔴 **CRÍTICO-1 e CRÍTICO-2** — adicionar aviso explícito de "uso só local" ou exigir Docker (15 min)
-2. 🟠 **ALTO-3** (n8n auth) e **ALTO-5** (Helm secrets) — fixes pequenos, alto impacto (30 min cada)
-3. 🟠 **ALTO-1** (CORS + rate limit + headers) — middleware reusável que aplica nos 3 FastAPI (1h)
-4. 🟠 **ALTO-2** (IAM least privilege) e **ALTO-4** (securityContext) — IaC (40 min)
-5. 🟡 Médios em ordem do impacto
+🎉 **20/21 achados resolvidos** + 1 N/A (BAIXO-6 backup, não aplicável a portfolio educacional sem dados de produção).
 
-Quer que eu aplique algum desses fixes? Posso ir um por um:
-- **(a)** Aplicar todos os CRÍTICOS de uma vez
-- **(b)** Aplicar todos os ALTOS de uma vez
-- **(c)** Pegar um específico (me diz qual número)
-- **(d)** Aplicar tudo (CRÍTICO + ALTO + MÉDIO) num PR só
+### Commits gerados (em `main`)
+
+| Commit | Achados resolvidos | Resumo |
+|--------|-------------------|--------|
+| `5d6db3e` | — | docs: relatório inicial |
+| `57bed0d` | CRÍTICO-1+2, ALTO-1 | sandbox opt-in + middleware FastAPI |
+| `3a1da5a` | ALTO-2/3/4/5, MÉDIO-8 | IAM, n8n auth, K8s hardening |
+| `7cc415c` | BAIXO-3, MÉDIO-4 | request ID + CSP |
+| `055a5d4` | BAIXO-1+2, MÉDIO-2+3 | supply-chain hardening |
+| `e200117` | BAIXO-4+5 | PRIVACY.md + LGPD art. 18 completo |
+| `38e818b` | MÉDIO-5+6 | skops + DDGS timeout |
+
+### Bônus arquiteturais entregues
+
+- 📦 **`projects/_shared/security.py`** reusável (CORS, headers, request ID, rate limit)
+- 📋 **`docs/PRIVACY.md`** alinhado a LGPD 13.709/2018
+- 🔒 **`.github/workflows/audit.yml`** roda `pip-audit` semanal + em PRs
+- 🤖 **`.github/dependabot.yml`** mantém SHAs das actions atualizados
+- 🛡️ **`projects/21-deploy-docker-k8s/helm/templates/secret.yaml`** + `envFrom` + securityContext completo
+- 📜 **`constraints.txt`** com versões testadas para todos os 21 projetos
+- 🔐 **`OAKEN_ALLOW_LOCAL_EXEC=1`** opt-in para execução não-isolada
+- 🧹 **`.dockerignore`** evita copiar `.env`, tests, artefatos para o container
 
 ---
 
-*Gerado por `/cybersecurity-scan` — 90 checks em 8 categorias.*
+*Gerado por `/cybersecurity-scan` — 90 checks em 8 categorias. Todos os fixes aplicados.*
