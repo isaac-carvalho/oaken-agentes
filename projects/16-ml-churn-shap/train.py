@@ -1,10 +1,14 @@
-"""Treina XGBoost para churn em dataset sintético."""
+"""Treina XGBoost para churn em dataset sintético.
+
+Por padrão salva o modelo em **skops** (formato seguro contra deserialização
+arbitrária). Para legado pickle/joblib, defina ``OAKEN_USE_PICKLE=1``.
+"""
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
-import joblib
 import numpy as np
 import pandas as pd
 from sklearn.metrics import classification_report, roc_auc_score
@@ -59,7 +63,26 @@ def main() -> None:
         "n_test": len(X_te),
     }
     (OUT / "metrics.json").write_text(json.dumps(metrics, indent=2))
-    joblib.dump(model, OUT / "modelo.pkl")
+
+    use_pickle = os.environ.get("OAKEN_USE_PICKLE") == "1"
+    try:
+        if use_pickle:
+            raise ImportError  # força fallback para pickle
+        from skops.io import dump as skops_dump
+
+        skops_dump(model, OUT / "modelo.skops")
+        print(f"Modelo salvo em formato SKOPS (seguro): {OUT / 'modelo.skops'}")
+    except ImportError:
+        # Fallback pickle (joblib). Avisar sobre risco.
+        import joblib
+
+        joblib.dump(model, OUT / "modelo.pkl")
+        print(
+            f"⚠️  modelo salvo em pickle ({OUT / 'modelo.pkl'}). "
+            "NÃO carregue pickles de fontes não-confiáveis (RCE). "
+            "Instale `skops` para usar formato seguro."
+        )
+
     df.to_csv(OUT / "dataset.csv", index=False)
     print(f"AUC={metrics['auc']:.3f}  artefatos em {OUT}/")
 

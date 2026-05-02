@@ -24,16 +24,24 @@ class State(TypedDict):
     report: str
 
 
-def _search(query: str, k: int = 5) -> str:
-    try:
+def _search(query: str, k: int = 5, timeout_s: float = 8.0) -> str:
+    """Busca DDGS com timeout duro (default 8s)."""
+    from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeout
+
+    def _do() -> str:
         try:
             from ddgs import DDGS  # type: ignore
         except ImportError:
             from duckduckgo_search import DDGS  # type: ignore (lib antiga)
-
         with DDGS() as ddgs:
             res = list(ddgs.text(query, max_results=k))
         return "\n".join(f"- {r.get('title','?')}: {r.get('body','')}" for r in res)
+
+    try:
+        with ThreadPoolExecutor(max_workers=1) as ex:
+            return ex.submit(_do).result(timeout=timeout_s)
+    except FutureTimeout:
+        return f"(timeout apos {timeout_s}s)"
     except Exception as e:
         return f"(busca offline ou erro: {e})"
 
