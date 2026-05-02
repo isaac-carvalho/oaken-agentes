@@ -118,6 +118,48 @@ def consultar_consentimento(titular_id: str) -> dict:
     return {"titular": titular_id, "finalidades": db[titular_id]}
 
 
+@app.get("/titular/{titular_id}")
+def confirmar_existencia(titular_id: str) -> dict:
+    """LGPD art. 18, I — confirmação da existência de tratamento."""
+    _validate_titular(titular_id)
+    db = _load_consent()
+    return {"titular": titular_id, "existe": titular_id in db}
+
+
+@app.get("/titular/{titular_id}/dados")
+def acesso_dados(titular_id: str) -> dict:
+    """LGPD art. 18, II — direito de acesso aos dados pessoais tratados."""
+    _validate_titular(titular_id)
+    db = _load_consent()
+    if titular_id not in db:
+        raise HTTPException(404, f"Titular '{titular_id}' não encontrado")
+    h = _append({"event": "access", "titular": titular_id})
+    return {
+        "titular": titular_id,
+        "finalidades": db[titular_id],
+        "tratamentos_documentados": list(db[titular_id].keys()),
+        "audit_hash": h,
+    }
+
+
+@app.get("/titular/{titular_id}/export")
+def portabilidade(titular_id: str) -> dict:
+    """LGPD art. 18, V — portabilidade dos dados em formato estruturado."""
+    _validate_titular(titular_id)
+    db = _load_consent()
+    if titular_id not in db:
+        raise HTTPException(404, f"Titular '{titular_id}' não encontrado")
+    h = _append({"event": "export", "titular": titular_id})
+    return {
+        "format": "application/json",
+        "version": "1.0",
+        "titular": titular_id,
+        "exportado_em": datetime.now(timezone.utc).isoformat(),
+        "dados": db[titular_id],
+        "audit_hash": h,
+    }
+
+
 @app.delete("/titular/{titular_id}")
 def excluir(titular_id: str) -> dict:
     """Direito ao esquecimento (LGPD art. 18) com cascade completo."""
