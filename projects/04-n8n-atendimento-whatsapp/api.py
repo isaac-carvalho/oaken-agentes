@@ -5,14 +5,20 @@ import sys
 from pathlib import Path
 
 from fastapi import FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from projects._shared import get_default_client  # noqa: E402
+from projects._shared import apply_security, get_default_client  # noqa: E402
 
 app = FastAPI(title="Atendimento WhatsApp")
+apply_security(
+    app,
+    allow_origins=["http://localhost:5678"],  # n8n local default
+    allow_methods=["GET", "POST"],
+    rate_limit_per_minute=60,
+)
 _llm = get_default_client()
 
 INTENCOES = ("saudacao", "duvida", "reclamacao", "outro")
@@ -28,8 +34,8 @@ PROMPT_RESP = (
 
 
 class Mensagem(BaseModel):
-    telefone: str
-    mensagem: str
+    telefone: str = Field(min_length=8, max_length=20)
+    mensagem: str = Field(min_length=1, max_length=2000)
 
 
 class Resposta(BaseModel):

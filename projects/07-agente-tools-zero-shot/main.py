@@ -53,6 +53,19 @@ def tool_web(query: str) -> str:
 
 @register_tool("python", "Executa código Python. Input: código.")
 def tool_python(code: str) -> str:
+    """Executa código Python escrito pelo LLM.
+
+    ⚠️  RISCO: prompt-injection pode levar à RCE no host. Por isso desabilitado
+    por padrão; defina OAKEN_ALLOW_LOCAL_EXEC=1 para autorizar (use SÓ em
+    ambiente descartável).
+    """
+    import os
+
+    if os.environ.get("OAKEN_ALLOW_LOCAL_EXEC") != "1":
+        return (
+            "tool python desabilitada por seguranca. Para habilitar (use SO em "
+            "ambiente descartavel): export OAKEN_ALLOW_LOCAL_EXEC=1"
+        )
     try:
         out = subprocess.run(
             [sys.executable, "-c", code],

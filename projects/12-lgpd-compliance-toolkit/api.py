@@ -4,11 +4,17 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+
+from projects._shared import apply_security  # noqa: E402
 
 PII = {
     "cpf": re.compile(r"\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b"),
@@ -19,17 +25,29 @@ PII = {
 
 LOG = Path(__file__).parent / "audit_chain.log"
 CONSENT_DB = Path(__file__).parent / "consent.json"
+TITULAR_RE = re.compile(r"^[a-zA-Z0-9_-]{1,64}$")
 
 app = FastAPI(title="LGPD Toolkit")
+apply_security(
+    app,
+    allow_origins=["http://localhost:8080"],
+    allow_methods=["GET", "POST", "DELETE"],
+    rate_limit_per_minute=120,
+)
+
+
+def _validate_titular(titular_id: str) -> None:
+    if not TITULAR_RE.match(titular_id):
+        raise HTTPException(400, "titular_id inválido (use [a-zA-Z0-9_-]{1,64})")
 
 
 class TextoIn(BaseModel):
-    texto: str
+    texto: str = Field(min_length=1, max_length=10000)
 
 
 class Consentimento(BaseModel):
-    titular: str
-    finalidade: str
+    titular: str = Field(pattern=r"^[a-zA-Z0-9_-]{1,64}$")
+    finalidade: str = Field(min_length=1, max_length=128)
     aceito: bool
 
 
@@ -93,6 +111,7 @@ def registrar_consentimento(c: Consentimento) -> dict:
 @app.get("/consentimento/{titular_id}")
 def consultar_consentimento(titular_id: str) -> dict:
     """Consulta status de consentimento de um titular."""
+    _validate_titular(titular_id)
     db = _load_consent()
     if titular_id not in db:
         raise HTTPException(404, f"Titular '{titular_id}' não encontrado")
@@ -102,6 +121,7 @@ def consultar_consentimento(titular_id: str) -> dict:
 @app.delete("/titular/{titular_id}")
 def excluir(titular_id: str) -> dict:
     """Direito ao esquecimento (LGPD art. 18) com cascade completo."""
+    _validate_titular(titular_id)
     db = _load_consent()
     existed = titular_id in db
     purposes_removed = list(db.get(titular_id, {}).keys())

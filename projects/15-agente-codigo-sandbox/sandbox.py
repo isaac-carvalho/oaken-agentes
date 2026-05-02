@@ -1,10 +1,20 @@
-"""Execução de código Python em sandbox Docker (com fallback subprocess)."""
+"""Execução de código Python em sandbox Docker (com fallback subprocess opt-in).
+
+⚠️  SEGURANÇA: o fallback subprocess executa código arbitrário no host. Por
+padrão é desabilitado. Para habilitar (use só em ambiente descartável):
+    export OAKEN_ALLOW_LOCAL_EXEC=1
+"""
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
+
+
+class SandboxRefusedError(RuntimeError):
+    """Levantado quando Docker não está disponível e fallback não foi autorizado."""
 
 
 def _run_subprocess(code: str, timeout: int) -> tuple[bool, str]:
@@ -23,7 +33,12 @@ def _run_subprocess(code: str, timeout: int) -> tuple[bool, str]:
 
 
 def run_in_docker(code: str, timeout: int = 10) -> tuple[bool, str]:
-    """Tenta Docker. Se indisponível, usa subprocess."""
+    """Executa código em container Docker isolado (network=none, ro, mem 256m).
+
+    Se Docker não estiver disponível e ``OAKEN_ALLOW_LOCAL_EXEC=1`` estiver
+    definida, faz fallback para subprocess local (apenas pra demo). Caso
+    contrário levanta ``SandboxRefusedError``.
+    """
     try:
         import docker
 
@@ -51,4 +66,11 @@ def run_in_docker(code: str, timeout: int = 10) -> tuple[bool, str]:
         finally:
             host_path.rename(host_path.with_suffix(".done.py"))
     except Exception:
+        if os.environ.get("OAKEN_ALLOW_LOCAL_EXEC") != "1":
+            raise SandboxRefusedError(
+                "Docker indisponível e OAKEN_ALLOW_LOCAL_EXEC!=1. "
+                "Por segurança, recuso executar código não-isolado. "
+                "Para autorizar fallback subprocess (use SÓ em ambiente "
+                "descartável): export OAKEN_ALLOW_LOCAL_EXEC=1"
+            )
         return _run_subprocess(code, timeout)
