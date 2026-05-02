@@ -17,7 +17,15 @@ resources:
     cpu: "500m"
     memory: "512Mi"
 
-env:
-  OPENAI_API_KEY: ""
-  GEMINI_API_KEY: ""
-  ANTHROPIC_API_KEY: ""
+# Configuração de rate limit + CORS (lidos como env via deployment.yaml)
+rateLimit: 60
+allowedOrigins: "http://localhost:3000"
+
+# ⚠️  NÃO comitar valores reais no git. Injete via:
+#   helm install agent ./helm --set secrets.openaiApiKey=$OPENAI_API_KEY
+# ou via external-secrets / sealed-secrets em produção.
+secrets:
+  openaiApiKey: ""
+  geminiApiKey: ""
+  anthropicApiKey: ""
+  oakenApiKey: ""    # API key do proprio /chat (auth do endpoint)

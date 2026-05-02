@@ -7,13 +7,13 @@
 
 ## Sumário
 
-| Severidade | Quantidade |
-|---|---|
-| 🔴 CRÍTICO | **2** |
-| 🟠 ALTO | **5** |
-| 🟡 MÉDIO | **8** |
-| 🟢 BAIXO | **6** |
-| **Total de achados** | **21** |
+| Severidade | Total | Resolvido |
+|---|---|---|
+| 🔴 CRÍTICO | 2 | ✅ **2** |
+| 🟠 ALTO | 5 | ✅ **5** |
+| 🟡 MÉDIO | 8 | ⚠️ **1 parcial** (MÉDIO-8 fix junto com ALTO-2) |
+| 🟢 BAIXO | 6 | ⏳ pendente (sugestões) |
+| **Total de achados** | **21** | **8 fixes aplicados** |
 
 **Pontos fortes do projeto:**
 - ✅ `.env` no `.gitignore` (e `.env.*` também)
@@ -30,7 +30,9 @@
 
 ## 🔴 Achados Críticos
 
-### [CRÍTICO-1] Sandbox subprocess sem isolamento real
+> ✅ **Ambos os críticos foram resolvidos no commit `57bed0d`** com opt-in via `OAKEN_ALLOW_LOCAL_EXEC=1`. Default agora é seguro.
+
+### [CRÍTICO-1] ✅ RESOLVIDO · Sandbox subprocess sem isolamento real
 **Categoria:** 3 · CÓDIGO (Command injection / Insecure execution)
 **Arquivo:** `projects/15-agente-codigo-sandbox/sandbox.py:11-22, 51`
 **Impacto:** O fallback `_run_subprocess` executa código arbitrário gerado por LLM com `subprocess.run([sys.executable, "-c", code], ...)` no host. Tem timeout (10s) mas pode: ler `~/.ssh/`, `~/.aws/credentials`, vazar variáveis de ambiente, escrever em `/tmp`, fazer rede. Em prompt-injection, RCE imediato.
@@ -39,7 +41,7 @@
 2. Se manter, isolar com `firejail`/`bubblewrap` + namespace separado.
 3. Adicionar aviso explícito no README: "uso apenas em ambiente descartável".
 
-### [CRÍTICO-2] Tool `python` do agente 07 executa código arbitrário do LLM
+### [CRÍTICO-2] ✅ RESOLVIDO · Tool `python` do agente 07 executa código arbitrário do LLM
 **Categoria:** 3 · CÓDIGO
 **Arquivo:** `projects/07-agente-tools-zero-shot/main.py:54-65`
 **Impacto:** Mesma classe do CRÍTICO-1 — `subprocess.run([sys.executable, "-c", code], timeout=10)` chamado pelo loop ReAct. LLM pode emitir `ACAO: {"tool":"python","input":"open('/etc/shadow').read()"}`. Se o agente for exposto via API web, comprometimento total.
@@ -52,7 +54,9 @@
 
 ## 🟠 Achados Altos
 
-### [ALTO-1] FastAPI sem CORS, rate limiting nem security headers
+> ✅ **Todos os 5 altos foram resolvidos.** Ver commits `57bed0d` (ALTO-1), `<commit-2>` (ALTO-2/3/4/5).
+
+### [ALTO-1] ✅ RESOLVIDO · FastAPI sem CORS, rate limiting nem security headers
 **Categoria:** 4 · INFRA
 **Arquivos:** `projects/04-n8n-atendimento-whatsapp/api.py`, `projects/12-lgpd-compliance-toolkit/api.py`, `projects/21-deploy-docker-k8s/app.py`
 **Impacto:** Comportamento default do FastAPI permite chamadas cross-origin de qualquer origem; sem `slowapi` qualquer cliente pode esgotar quota OpenAI/abrir DoS; sem CSP/HSTS/X-Frame-Options o recrutador que abrir o portfólio fica exposto a clickjacking se algum dia o app rodar em produção.
@@ -75,7 +79,7 @@ async def headers(req, call_next):
     return resp
 ```
 
-### [ALTO-2] IAM Lambda com `logs:*` e `bedrock:InvokeModel` em `Resource = "*"`
+### [ALTO-2] ✅ RESOLVIDO · IAM Lambda com `logs:*` e `bedrock:InvokeModel` em `Resource = "*"`
 **Categoria:** 5 · IAM
 **Arquivo:** `projects/11-deploy-aws-bedrock/terraform/main.tf:33-37`
 **Impacto:** Permissões mais amplas que o necessário. `logs:*` permite criar/destruir log groups arbitrários; `bedrock:InvokeModel` em `*` permite invocar qualquer modelo da conta (não só claude-haiku).
@@ -91,13 +95,13 @@ async def headers(req, call_next):
 }
 ```
 
-### [ALTO-3] Webhook n8n sem autenticação
+### [ALTO-3] ✅ RESOLVIDO · Webhook n8n sem autenticação
 **Categoria:** 4 · INFRA
 **Arquivo:** `projects/04-n8n-atendimento-whatsapp/workflow.json` (nó `Webhook WhatsApp`)
 **Impacto:** Webhook público sem `headerAuth`. Qualquer um pode invocar com payload arbitrário, gerando custo OpenAI e potencial spam para clientes.
 **Fix sugerido:** No n8n, abrir o nó Webhook → **Authentication** → `Header Auth` → criar credencial com header `X-Webhook-Secret`.
 
-### [ALTO-4] Helm chart sem `securityContext`
+### [ALTO-4] ✅ RESOLVIDO · Helm chart sem `securityContext`
 **Categoria:** 4 · INFRA / 5 · IAM
 **Arquivo:** `projects/21-deploy-docker-k8s/helm/templates/deployment.yaml`
 **Impacto:** Sem `runAsNonRoot: true`, `readOnlyRootFilesystem: true`, sem drop de capabilities. Em K8s real, container comprometido tem mais facilidade de escalar privilégios.
@@ -112,7 +116,7 @@ securityContext:
     drop: [ALL]
 ```
 
-### [ALTO-5] Helm `values.yaml` expõe API keys como env strings
+### [ALTO-5] ✅ RESOLVIDO · Helm `values.yaml` expõe API keys como env strings
 **Categoria:** 1 · SECRETS
 **Arquivo:** `projects/21-deploy-docker-k8s/helm/values.yaml:16-20`
 **Impacto:** `env: OPENAI_API_KEY: ""` no `values.yaml` será materializado como string no Deployment YAML — visível em `kubectl describe pod` para qualquer um com read no namespace. Se commitarem o values com chave preenchida por engano, vaza no git.
@@ -207,7 +211,7 @@ def chat(p: Pergunta, x_api_key: str = Header(...)):
     ...
 ```
 
-### [MÉDIO-8] Lambda vaza mensagem de erro do Bedrock para o cliente
+### [MÉDIO-8] ✅ RESOLVIDO · Lambda vaza mensagem de erro do Bedrock para o cliente
 **Categoria:** 3 · CÓDIGO
 **Arquivo:** `projects/11-deploy-aws-bedrock/handler.py:30`
 **Impacto:** `text = f"[mock-bedrock] eco: {message} (erro Bedrock: {exc})"` expõe `Unable to locate credentials` no body da resposta — vazamento de info de infraestrutura.

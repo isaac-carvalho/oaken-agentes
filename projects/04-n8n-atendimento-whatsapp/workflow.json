@@ -5,13 +5,22 @@
       "parameters": {
         "httpMethod": "POST",
         "path": "whatsapp-incoming",
-        "responseMode": "responseNode"
+        "responseMode": "responseNode",
+        "authentication": "headerAuth",
+        "options": {}
       },
       "id": "webhook-1",
       "name": "Webhook WhatsApp",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [200, 300]
+      "position": [200, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "PLACEHOLDER_REPLACE_AFTER_IMPORT",
+          "name": "WhatsApp Webhook Header Auth"
+        }
+      },
+      "notes": "Header Auth configurado: criar credencial 'httpHeaderAuth' com header X-Webhook-Secret e valor secreto compartilhado com o cliente WhatsApp. Sem isso, webhook fica publicamente invocavel."
     },
     {
       "parameters": {
