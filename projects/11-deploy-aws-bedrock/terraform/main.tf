@@ -87,10 +87,18 @@ resource "aws_apigatewayv2_integration" "lambda" {
   payload_format_version = "2.0"
 }
 
+resource "aws_apigatewayv2_authorizer" "iam" {
+  api_id          = aws_apigatewayv2_api.http.id
+  authorizer_type = "REQUEST"
+  name            = "iam-auth"
+  identity_sources = ["$request.header.Authorization"]
+}
+
 resource "aws_apigatewayv2_route" "post" {
-  api_id    = aws_apigatewayv2_api.http.id
-  route_key = "POST /chat"
-  target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "POST /chat"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "AWS_IAM"
 }
 
 resource "aws_apigatewayv2_stage" "prod" {

@@ -3,12 +3,14 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
+import secrets as sec_mod
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException
 from pydantic import BaseModel, Field
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -27,6 +29,8 @@ LOG = Path(__file__).parent / "audit_chain.log"
 CONSENT_DB = Path(__file__).parent / "consent.json"
 TITULAR_RE = re.compile(r"^[a-zA-Z0-9_-]{1,64}$")
 
+_API_KEY = os.environ.get("LGPD_API_KEY")
+
 app = FastAPI(title="LGPD Toolkit")
 apply_security(
     app,
@@ -34,6 +38,14 @@ apply_security(
     allow_methods=["GET", "POST", "DELETE"],
     rate_limit_per_minute=120,
 )
+
+
+def _require_api_key(x_api_key: str | None = Header(default=None)) -> None:
+    """Exige API key nos endpoints sensíveis (LGPD_API_KEY)."""
+    if _API_KEY is None:
+        return
+    if not x_api_key or not sec_mod.compare_digest(x_api_key, _API_KEY):
+        raise HTTPException(401, "unauthorized")
 
 
 def _validate_titular(titular_id: str) -> None:
@@ -126,7 +138,7 @@ def confirmar_existencia(titular_id: str) -> dict:
     return {"titular": titular_id, "existe": titular_id in db}
 
 
-@app.get("/titular/{titular_id}/dados")
+@app.get("/titular/{titular_id}/dados", dependencies=[Depends(_require_api_key)])
 def acesso_dados(titular_id: str) -> dict:
     """LGPD art. 18, II — direito de acesso aos dados pessoais tratados."""
     _validate_titular(titular_id)
@@ -142,7 +154,7 @@ def acesso_dados(titular_id: str) -> dict:
     }
 
 
-@app.get("/titular/{titular_id}/export")
+@app.get("/titular/{titular_id}/export", dependencies=[Depends(_require_api_key)])
 def portabilidade(titular_id: str) -> dict:
     """LGPD art. 18, V — portabilidade dos dados em formato estruturado."""
     _validate_titular(titular_id)
@@ -160,7 +172,7 @@ def portabilidade(titular_id: str) -> dict:
     }
 
 
-@app.delete("/titular/{titular_id}")
+@app.delete("/titular/{titular_id}", dependencies=[Depends(_require_api_key)])
 def excluir(titular_id: str) -> dict:
     """Direito ao esquecimento (LGPD art. 18) com cascade completo."""
     _validate_titular(titular_id)
@@ -178,7 +190,7 @@ def excluir(titular_id: str) -> dict:
     return {"removido": existed, "finalidades_removidas": purposes_removed, "audit_hash": h}
 
 
-@app.get("/auditoria")
+@app.get("/auditoria", dependencies=[Depends(_require_api_key)])
 def auditoria(limit: int = 50) -> list[dict]:
     if not LOG.exists():
         return []
@@ -186,7 +198,7 @@ def auditoria(limit: int = 50) -> list[dict]:
     return [json.loads(line) for line in lines]
 
 
-@app.get("/auditoria/verificar")
+@app.get("/auditoria/verificar", dependencies=[Depends(_require_api_key)])
 def verificar_chain() -> dict:
     if not LOG.exists():
         return {"valido": True, "n": 0}

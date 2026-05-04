@@ -30,7 +30,7 @@ def test_build_clients_no_keys():
 
 
 def test_build_clients_with_openai_key():
-    with patch.dict("os.environ", {"OPENAI_API_KEY": "sk-test123"}, clear=True):
+    with patch.dict("os.environ", {"OPENAI_API_KEY": "sk-fake-key-for-testing-only"}, clear=True):
         with patch("app.OpenAIClient") as mock_cls:
             mock_cls.return_value = MagicMock()
             clients = build_clients()

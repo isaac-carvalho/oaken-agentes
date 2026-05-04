@@ -80,5 +80,8 @@ def apply_security(
             async def _rate_handler(_req, _exc):
                 return Response(content="too many requests", status_code=429)
         except ImportError:
-            # slowapi opcional; se não instalado, segue sem rate limiting.
-            pass
+            import logging
+            logging.getLogger(__name__).warning(
+                "slowapi não instalado — rate limiting DESABILITADO. "
+                "Instale com: pip install slowapi"
+            )

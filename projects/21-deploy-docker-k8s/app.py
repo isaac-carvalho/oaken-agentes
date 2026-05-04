@@ -24,6 +24,10 @@ _llm = get_default_client()
 _API_KEY = os.environ.get("OAKEN_API_KEY")
 
 
+if os.environ.get("OAKEN_ENV") == "production" and not _API_KEY:
+    raise RuntimeError("OAKEN_API_KEY obrigatória em produção. Defina a variável de ambiente.")
+
+
 def _check_api_key(x_api_key: str | None) -> None:
     """Exige API key se OAKEN_API_KEY estiver configurada."""
     if _API_KEY is None:

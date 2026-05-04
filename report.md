@@ -1,127 +1,283 @@
 # Cybersecurity Scan Report
 
-**Data:** 2026-05-04
-**Stack:** Python 3.11+ · FastAPI · LangChain/LangGraph · ChromaDB · scikit-learn · XGBoost · PyTorch · Streamlit · Terraform/AWS Lambda+Bedrock · Docker · Kubernetes/Helm · GitHub Pages
-**Escopo:** monorepo `oaken-agentes` com 21 projetos + 2 HTML pages (portfolio + landing)
+Data: 2026-05-04 | Stack: Python, FastAPI, LangChain, LangGraph, ChromaDB, PyTorch, Streamlit, Docker, Kubernetes/Helm, Terraform/AWS, n8n
 
-## Sumario
+---
 
-| Metrica | Valor |
-|---|---|
+## Sumário
+
+| Métrica | Valor |
+|---------|-------|
 | Checks executados | 90 |
-| Passaram | 80 |
-| Falharam | 10 |
-| Criticos | 0 |
-| Altos | 1 |
-| Medios | 5 |
-| Baixos | 4 |
-
-## Achados e Status
-
-### [ALTO-1] API Gateway sem autenticacao — Terraform
-
-**Categoria:** Infra | **Arquivo:** `projects/11-deploy-aws-bedrock/terraform/main.tf:90`
-**Impacto:** Endpoint `POST /chat` publico sem API key, JWT ou IAM authorizer. Qualquer pessoa com a URL pode invocar o Lambda.
-**Fix sugerido:** Adicionar `aws_apigatewayv2_authorizer` ou API key obrigatoria. Sem throttling, custo ilimitado.
-**Status:** Pendente (requer decisao de auth strategy)
+| Passaram | 68 |
+| Falharam | 22 |
+| **CRÍTICOS** | **0** |
+| **ALTOS** | **5** |
+| **MÉDIOS** | **9** |
+| **BAIXOS** | **8** |
 
 ---
 
-### [MEDIO-1] CSP bloqueava JavaScript inline — index.html (CORRIGIDO)
+## Categoria 1 · SECRETS
 
-**Categoria:** Infra | **Arquivo:** `index.html:18`
-**Impacto:** `script-src 'self'` bloqueava o script de scroll reveal (linha 1299). Todas as secoes com `.reveal` ficavam invisiveis (opacity: 0). Stats, Sobre, Produto, Projetos, Diferenciais — ocultos.
-**Fix:** Adicionado `'unsafe-inline'` ao `script-src`.
-**Status:** CORRIGIDO
+| Check | Status | Nota |
+|-------|--------|------|
+| API keys hardcoded | ✅ PASS | Nenhuma chave real encontrada |
+| .env no .gitignore | ✅ PASS | `.env` e `.env.*` excluídos |
+| .env.example sem valores reais | ✅ PASS | Apenas placeholders vazios |
+| JWT secrets, DB passwords | ✅ PASS | Tudo via `os.environ.get()` |
+| Secrets no git history | ✅ PASS | Nenhum encontrado |
+| Secret manager em uso | ⚠️ N/A | Portfólio educacional |
+| Rotação de chaves | ⚠️ N/A | Portfólio educacional |
+| Tokens em comentários/TODOs | ✅ PASS | Nenhum |
+| Webhook secrets configurados | ⚠️ MÉDIO | Ver achado #1 |
+| Credenciais em CI/CD | ✅ PASS | Actions usam `${{ secrets.* }}` |
+| Least privilege em secrets | ✅ PASS | |
+| Logs não imprimem secrets | ✅ PASS | Nenhum print/log de env vars |
 
-### [MEDIO-2] pito-presentation.html sem CSP nem headers de seguranca (CORRIGIDO)
+### Achados
 
-**Categoria:** Infra | **Arquivo:** `pito-presentation.html:5-6`
-**Impacto:** Landing page sem nenhuma protecao CSP — scripts inline, sem X-Content-Type-Options, sem Referrer-Policy. Links `target="_blank"` sem `rel="noopener"` (tab-napping).
-**Fix:** Adicionados meta CSP, X-Content-Type-Options, Referrer-Policy e `rel="noopener noreferrer"` nos links.
-**Status:** CORRIGIDO
+#### [MÉDIO] #1 — Webhook n8n sem credencial real
+**Arquivo:** `projects/04-n8n-atendimento-whatsapp/workflow.json:19`
+**Impacto:** Se importado no n8n sem configurar credencial, webhook fica público.
+**Fix:** Adicionar instrução obrigatória no README e validação no workflow.
 
-### [MEDIO-3] CORS allow_headers wildcard (CORRIGIDO)
+#### [BAIXO] #2 — sk-test123 em teste unitário
+**Arquivo:** `projects/09-benchmark-llms/test_benchmark.py:33`
+**Impacto:** Falso positivo em scanners. Sem risco real.
+**Fix:** Renomear para `sk-fake-key-for-testing`.
 
-**Categoria:** Codigo | **Arquivo:** `projects/_shared/security.py:49` + `projects/21-deploy-docker-k8s/_shared/security.py:49`
-**Impacto:** `allow_headers=["*"]` permite qualquer header HTTP em requests cross-origin. Combinado com origem mal configurada, pode facilitar header injection.
-**Fix:** Substituido por lista explicita: `["Content-Type", "X-API-Key", "X-Request-Id"]`.
-**Status:** CORRIGIDO
-
-### [MEDIO-4] Helm image.tag: latest
-
-**Categoria:** Infra | **Arquivo:** `projects/21-deploy-docker-k8s/helm/values.yaml:3`
-**Impacto:** Tag mutavel — deploy pode puxar imagem diferente sem controle. CI tambem pusha `:latest` alem do SHA.
-**Fix sugerido:** Default para digest SHA ou tag imutavel no values.yaml. Remover `:latest` do CI push.
-**Status:** Pendente
-
-### [MEDIO-5] Dependencias sem pin exato — 21 requirements.txt
-
-**Categoria:** Dependencias | **Arquivo:** Todos os `projects/*/requirements.txt`
-**Impacto:** Todas usam `>=x.y.z` sem pin exato. `pip install` pode puxar versao major nova com breaking changes ou CVE.
-**Mitigacao existente:** `constraints.txt` limita 18 pacotes com upper bound (`<2.0`).
-**Fix sugerido:** Para portfolio educacional, o constraints.txt e suficiente. Para producao, usar `pip-compile` com hashes.
-**Status:** Aceitavel para portfolio
+#### [BAIXO] #3 — Helm secrets em plaintext no history
+**Arquivo:** `projects/21-deploy-docker-k8s/helm/templates/secret.yaml`
+**Impacto:** `--set secrets.openaiApiKey=...` fica visível em `helm history`.
+**Fix:** Usar external-secrets ou sealed-secrets.
 
 ---
 
-### [BAIXO-1] Subprocess com codigo LLM sem sandbox
+## Categoria 2 · DEPENDÊNCIAS
 
-**Categoria:** Codigo | **Arquivo:** `projects/07-agente-tools-zero-shot/main.py:78` + `projects/15-agente-codigo-sandbox/sandbox.py:22`
-**Impacto:** Quando `OAKEN_ALLOW_LOCAL_EXEC=1`, codigo gerado pelo LLM executa direto no host. Prompt injection → RCE.
-**Mitigacao:** Gate desabilitado por default + preferencia Docker. Risco real so se ativado em ambiente nao-descartavel.
-**Status:** Aceitavel (by design, documentado)
+| Check | Status | Nota |
+|-------|--------|------|
+| Pacotes com CVE crítico/alto | ❌ ALTO | Ver achados #4-#7 |
+| Dependências > 1 ano sem update | ✅ PASS | Constraints recentes |
+| Pacotes deprecated | ✅ PASS | Nenhum deprecated |
+| Lock file commitado | ❌ MÉDIO | Nenhum lock file |
+| Typosquatting suspeito | ✅ PASS | Todos pacotes legítimos |
+| Registries oficiais | ✅ PASS | PyPI oficial |
+| SBOM gerado | ❌ MÉDIO | Não implementado |
+| Vulnerabilidades transitivas | ❌ MÉDIO | pip-audit sem constraints |
 
-### [BAIXO-2] Dockerfile sem image digest pin
+### Achados
 
-**Categoria:** Infra | **Arquivo:** `projects/21-deploy-docker-k8s/Dockerfile:1`
-**Impacto:** `python:3.12-slim` e tag flutuante. `docker pull` pode trazer OS layer diferente.
-**Fix sugerido:** Usar `python:3.12-slim@sha256:<digest>`.
-**Status:** Pendente
+#### [ALTO] #4 — Pillow permite versões com CVE
+**Arquivo:** `projects/06-rag-multimodal-clip/requirements.txt`, `projects/17-cnn-pytorch-imagens/requirements.txt`
+**Impacto:** CVE-2023-50447 (heap overflow), CVE-2024-28219 — floor `>=10.0.0` permite versões vulneráveis.
+**Fix:** Alterar para `pillow>=10.3.0`.
 
-### [BAIXO-3] CI sem scan de vulnerabilidades na imagem
+#### [ALTO] #5 — LangChain permite versão com SQL injection
+**Arquivo:** `projects/05-chatbot-rag-pdfs/requirements.txt`
+**Impacto:** CVE-2024-3571 (SQL injection → execução arbitrária) — corrigido apenas em 0.2.16.
+**Fix:** Alterar para `langchain>=0.2.16`.
 
-**Categoria:** Infra | **Arquivo:** `projects/21-deploy-docker-k8s/.github/workflows/ci.yml`
-**Impacto:** SBOM e gerado mas nenhum gate Trivy/Grype antes do push. CVE no base image passa direto.
-**Fix sugerido:** Adicionar step `aquasecurity/trivy-action` antes do push.
-**Status:** Pendente
+#### [ALTO] #6 — MLflow permite versão com path traversal
+**Arquivo:** `projects/19-mlops-mlflow-dvc/requirements.txt`
+**Impacto:** CVE-2024-37052 — corrigido em 2.14.3.
+**Fix:** Alterar para `mlflow>=2.14.3`.
 
-### [BAIXO-4] constraints.txt incompleto
+#### [ALTO] #7 — torch sem upper bound
+**Arquivo:** `projects/06,17,18/requirements.txt`
+**Impacto:** CVE-2025-32434 (RCE via `torch.load`); range aberto aceita qualquer versão futura.
+**Fix:** Adicionar `torch>=2.2.0,<2.5`.
 
-**Categoria:** Dependencias | **Arquivo:** `constraints.txt`
-**Impacto:** Falta cobertura para `torch`, `langchain`, `chromadb`, `boto3`, `mlflow`, `dvc` — pacotes grandes com CVEs frequentes.
-**Fix sugerido:** Adicionar upper bounds para esses pacotes.
-**Status:** Pendente
+#### [MÉDIO] #8 — Sem lock files em 21 projetos
+**Impacto:** Builds não reproduzíveis. Dependências podem mudar entre installs.
+**Fix:** Gerar `requirements.lock` com `pip freeze` para cada projeto.
+
+#### [MÉDIO] #9 — pip-audit no CI ignora constraints
+**Arquivo:** `.github/workflows/audit.yml:36`
+**Impacto:** Auditoria corre sem restrições globais do `constraints.txt`.
+**Fix:** Adicionar `-c ../../constraints.txt` ao comando pip-audit.
 
 ---
 
-## Categorias Limpas (sem achados)
+## Categoria 3 · CÓDIGO
 
-| Categoria | Status |
-|---|---|
-| **Secrets** | Limpo — nenhum segredo em codigo, configs ou git history. `.env` no gitignore, `.env.example` sem valores reais |
-| **SQL Injection** | Limpo — nenhuma concatenacao SQL encontrada |
-| **XSS** | Limpo — nenhum `innerHTML`/`document.write`. Paginas estaticas sem input de usuario |
-| **SSRF** | Limpo — URLs hardcoded (localhost), nenhuma vem de input HTTP |
-| **Path Traversal** | Limpo — todos os `open()` com paths fixos |
-| **Desserializacao** | Limpo — zero `pickle.loads` ou `yaml.load` inseguro |
-| **LGPD** | Completo — PRIVACY.md robusto, 6 endpoints art. 18, audit chain SHA-256, PII redaction em 7 padroes |
-| **Logging** | Limpo — nenhum log imprime PII. Guardrails logam apenas hashes truncados |
-| **IAM (Helm)** | Bom — `runAsNonRoot`, `drop: [ALL]`, `readOnlyRootFilesystem`, `seccompProfile: RuntimeDefault` |
-| **Backup** | N/A para portfolio educacional |
+| Check | Status | Nota |
+|-------|--------|------|
+| SQL injection | ✅ PASS | Sem SQL raw |
+| XSS | ✅ PASS | Respostas JSON only |
+| IDOR | ❌ ALTO | Ver achado #10 |
+| CSRF | ✅ PASS | REST APIs, sem cookies/sessões |
+| SSRF | ✅ PASS | Sem URLs controladas por user |
+| Path traversal | ✅ PASS | Inputs validados com regex |
+| Command injection | ✅ PASS | Sem os.system/eval/exec |
+| Open redirect | ✅ PASS | Sem redirects |
+| Insecure deserialization | ✅ PASS | Sem pickle/yaml.load |
+| Validação de input | ✅ PASS | Pydantic models |
+| Rate limiting | ❌ MÉDIO | Silenciosamente desabilitado |
+| Mass assignment | ✅ PASS | Pydantic strict models |
+| Race conditions | ✅ PASS | |
+| Auth consistente | ❌ ALTO | Endpoints sem auth |
+| Stack trace vazando | ✅ PASS | HTTPException estruturado |
 
-## Resumo de Acoes
+### Achados
 
-| # | Acao | Status |
-|---|---|---|
-| 1 | CSP `script-src 'unsafe-inline'` em index.html | CORRIGIDO |
-| 2 | CSP + security headers em pito-presentation.html | CORRIGIDO |
-| 3 | `rel="noopener noreferrer"` em links externos pito | CORRIGIDO |
-| 4 | CORS `allow_headers` explicito (2 ficheiros) | CORRIGIDO |
-| 5 | API Gateway authorizer no Terraform | Pendente |
-| 6 | Helm default tag → digest | Pendente |
-| 7 | Dockerfile image digest pin | Pendente |
-| 8 | CI image scan gate (Trivy) | Pendente |
-| 9 | constraints.txt cobertura adicional | Pendente |
+#### [ALTO] #10 — Endpoints LGPD sem autenticação
+**Arquivo:** `projects/12-lgpd-compliance-toolkit/api.py:181-206`
+**Impacto:** `/auditoria`, `/titular/{id}/dados`, `/titular/{id}/export`, DELETE `/titular/{id}` acessíveis sem autenticação. Qualquer cliente pode ler/apagar dados de qualquer titular.
+**Fix:** Adicionar `Depends(_check_api_key)` em todos os endpoints sensíveis.
 
-**4 de 9 achados corrigidos nesta sessao.** Os pendentes sao decisoes arquiteturais ou melhorias incrementais que nao afetam a funcionalidade do portfolio.
+#### [ALTO] #11 — Auth opcional no endpoint /chat (deploy K8s)
+**Arquivo:** `projects/21-deploy-docker-k8s/app.py:29-31`
+**Impacto:** Se `OAKEN_API_KEY` não definida, endpoint fica aberto. Container pode subir em produção sem auth.
+**Fix:** Falhar no startup se `OAKEN_API_KEY` não definida quando `OAKEN_ENV=production`.
+
+#### [MÉDIO] #12 — Sandbox monta /tmp inteiro no container
+**Arquivo:** `projects/15-agente-codigo-sandbox/sandbox.py:53`
+**Impacto:** `host_path.parent` = `/tmp` — todos os arquivos temporários do host ficam acessíveis ao container (read-only mas visíveis).
+**Fix:** Montar apenas o arquivo: `{str(host_path): {"bind": "/work/script.py", "mode": "ro"}}`.
+
+#### [MÉDIO] #13 — Rate limiting silenciosamente desabilitado
+**Arquivo:** `projects/_shared/security.py:65-83`
+**Impacto:** `except ImportError: pass` — se slowapi não instalado, rate limiting some sem aviso.
+**Fix:** Logar warning quando slowapi não disponível.
+
+#### [MÉDIO] #14 — Scripts executados ficam em /tmp
+**Arquivo:** `projects/15-agente-codigo-sandbox/sandbox.py:67`
+**Impacto:** Arquivos `.done.py` acumulam código executado em `/tmp` sem limpeza.
+**Fix:** Apagar o arquivo após execução.
+
+---
+
+## Categoria 4 · INFRA
+
+| Check | Status | Nota |
+|-------|--------|------|
+| CORS restritivo | ✅ PASS | Sem wildcard `*` |
+| Headers de segurança | ✅ PASS | HSTS, X-Frame, X-Content-Type via `_shared/security.py` |
+| TLS 1.2+ | ⚠️ N/A | Aplicações não terminam TLS |
+| Certificados auto-renew | ⚠️ N/A | |
+| Cookies seguras | ✅ PASS | Sem cookies (JWT/API key) |
+| HTTP→HTTPS redirect | ⚠️ N/A | Delegado a reverse proxy |
+| WAF | ⚠️ N/A | Portfólio educacional |
+| DDoS protection | ⚠️ N/A | |
+| Serviços não expostos | ✅ PASS | |
+| Docker hardened | ✅ PASS | Non-root, read-only FS, drop ALL |
+
+### Achados
+
+#### [ALTO] #15 — API Gateway sem autenticação (AWS)
+**Arquivo:** `projects/11-deploy-aws-bedrock/terraform/main.tf`
+**Impacto:** `aws_apigatewayv2_route` sem `authorization_type` — default NONE. Endpoint `/chat` público sem auth, IAM ou API key. Qualquer pessoa pode consumir créditos Bedrock.
+**Fix:** Adicionar `authorization_type = "AWS_IAM"` ou API key obrigatória.
+
+#### [MÉDIO] #16 — Sem NetworkPolicy no Helm
+**Arquivo:** `projects/21-deploy-docker-k8s/helm/templates/`
+**Impacto:** Pods sem restrição de tráfego lateral no cluster.
+**Fix:** Adicionar `NetworkPolicy` template ao chart.
+
+#### [BAIXO] #17 — Base image sem digest
+**Arquivo:** `projects/21-deploy-docker-k8s/Dockerfile:2`
+**Impacto:** `python:3.12-slim` pode mudar sem aviso.
+**Fix:** Adicionar `@sha256:<digest>`.
+
+#### [BAIXO] #18 — Image tag `latest` no values.yaml
+**Arquivo:** `projects/21-deploy-docker-k8s/helm/values.yaml:3`
+**Impacto:** Não reproduzível em rollbacks.
+**Fix:** Usar tag semântica como default.
+
+#### [BAIXO] #19 — CORS default localhost em Helm
+**Arquivo:** `projects/21-deploy-docker-k8s/helm/values.yaml:22`
+**Impacto:** Requer override manual em produção; pode levar operador a usar `*`.
+**Fix:** Documentar no NOTES.txt a obrigatoriedade do override.
+
+---
+
+## Categoria 5 · IAM
+
+| Check | Status | Nota |
+|-------|--------|------|
+| MFA obrigatório pra admin | ⚠️ N/A | Sem painel admin |
+| Least privilege em roles | ✅ PASS | Terraform: apenas `bedrock:InvokeModel` + CloudWatch |
+| Service accounts mínimas | ✅ PASS | |
+| Tokens com escopo limitado | ❌ MÉDIO | API keys são all-or-nothing |
+| Timeout de sessão | ⚠️ N/A | Sem sessões |
+
+### Achados
+
+#### [MÉDIO] #20 — API keys sem escopo granular
+**Impacto:** Uma única `OAKEN_API_KEY` dá acesso a todos os endpoints. Sem distinção de roles.
+**Fix:** Para portfólio é aceitável. Em produção, implementar scoped tokens ou JWT com claims.
+
+---
+
+## Categoria 6 · LGPD
+
+| Check | Status | Nota |
+|-------|--------|------|
+| Política de privacidade | ⚠️ N/A | Portfólio educacional |
+| Consentimento explícito | ✅ PASS | Projeto 12 implementa opt-in |
+| Base legal documentada | ✅ PASS | Projeto 12 documenta bases |
+| Revogação de consentimento | ✅ PASS | Endpoint implementado |
+| Direito de acesso | ✅ PASS | `/titular/{id}/dados` |
+| Direito de portabilidade | ✅ PASS | `/titular/{id}/export` |
+| Direito ao esquecimento | ✅ PASS | DELETE `/titular/{id}` |
+| Anonimização | ✅ PASS | Presidio integrado |
+| Retenção definida | ❌ BAIXO | Sem TTL em dados |
+
+### Achados
+
+#### [BAIXO] #21 — Sem política de retenção de dados
+**Arquivo:** `projects/12-lgpd-compliance-toolkit/`
+**Impacto:** Dados armazenados indefinidamente. LGPD exige prazo definido.
+**Fix:** Adicionar TTL ou cleanup job.
+
+---
+
+## Categoria 7 · LOGS
+
+| Check | Status | Nota |
+|-------|--------|------|
+| Eventos de auth logados | ✅ PASS | Projeto 12 loga acessos |
+| Mudanças sensíveis logadas | ✅ PASS | Trilha de auditoria |
+| Dados sensíveis mascarados | ✅ PASS | Presidio na pipeline |
+| Timestamps UTC/ISO 8601 | ✅ PASS | |
+| Correlação por request ID | ❌ BAIXO | Sem request ID |
+| Logs centralizados | ⚠️ N/A | Projetos independentes |
+| Retenção 90 dias | ⚠️ N/A | |
+| Alertas suspeitos | ⚠️ N/A | |
+
+### Achados
+
+#### [BAIXO] #22 — Sem correlação por request ID
+**Impacto:** Difícil rastrear requisições entre serviços.
+**Fix:** Adicionar middleware de request ID no `_shared/security.py`.
+
+---
+
+## Categoria 8 · BACKUP
+
+| Check | Status | Nota |
+|-------|--------|------|
+| Backup automático | ⚠️ N/A | Portfólio — sem dados persistentes em produção |
+| Backup criptografado | ⚠️ N/A | |
+| RTO/RPO documentado | ⚠️ N/A | |
+| Runbook DR | ⚠️ N/A | |
+
+> Categoria não aplicável: portfólio educacional sem ambiente de produção com dados reais.
+
+---
+
+## Top 5 — Ações Prioritárias
+
+| # | Severidade | Achado | Fix |
+|---|-----------|--------|-----|
+| 1 | **ALTO** | API Gateway AWS sem auth (#15) | `authorization_type = "AWS_IAM"` |
+| 2 | **ALTO** | Endpoints LGPD sem auth (#10) | `Depends(_check_api_key)` |
+| 3 | **ALTO** | Auth opcional no deploy K8s (#11) | Fail-fast sem `OAKEN_API_KEY` |
+| 4 | **ALTO** | CVEs em pillow/langchain/mlflow/torch (#4-7) | Bump version floors |
+| 5 | **MÉDIO** | Sandbox monta /tmp inteiro (#12) | Montar só o arquivo |
+
+---
+
+*Relatório gerado por Claude Code — 2026-05-04*

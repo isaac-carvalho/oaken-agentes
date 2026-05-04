@@ -50,7 +50,7 @@ def run_in_docker(code: str, timeout: int = 10) -> tuple[bool, str]:
             log = client.containers.run(
                 "python:3.12-slim",
                 command=["python", "/work/script.py"],
-                volumes={str(host_path.parent): {"bind": "/work", "mode": "ro"}},
+                volumes={str(host_path): {"bind": "/work/script.py", "mode": "ro"}},
                 working_dir="/work",
                 network_disabled=True,
                 mem_limit="256m",
@@ -64,7 +64,7 @@ def run_in_docker(code: str, timeout: int = 10) -> tuple[bool, str]:
         except Exception as e:
             return False, str(e)[:4000]
         finally:
-            host_path.rename(host_path.with_suffix(".done.py"))
+            host_path.unlink(missing_ok=True)
     except Exception:
         if os.environ.get("OAKEN_ALLOW_LOCAL_EXEC") != "1":
             raise SandboxRefusedError(
