@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projeto 21 — Deploy Docker + K8s</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080b12;--card:#111828;--border:#1e2a42;--text:#e8edf8;--accent:#4f8cff;--purple:#a44dff;--muted:#7a87a0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.7}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.container{max-width:820px;margin:0 auto;padding:2rem 1.5rem}
+nav{padding:1.2rem 0;border-bottom:1px solid var(--border);margin-bottom:2.5rem}
+nav a{font-size:.95rem;color:var(--muted)}nav a:hover{color:var(--accent)}
+.badge{display:inline-block;background:var(--border);color:var(--accent);padding:.2rem .7rem;border-radius:6px;font-size:.8rem;margin:.2rem .3rem .2rem 0;font-family:'JetBrains Mono',monospace}
+.badge.purple{color:var(--purple);border:1px solid var(--purple)}
+.hero{margin-bottom:3rem}.hero .number{font-size:3.5rem;font-weight:700;color:var(--purple);opacity:.5;line-height:1}
+.hero h1{font-size:2rem;font-weight:700;margin:.5rem 0 .8rem}
+.hero p{color:var(--muted);font-size:1.05rem;max-width:600px}.tags{margin-top:1rem}
+section{margin-bottom:3rem}section h2{font-size:1.3rem;font-weight:700;margin-bottom:1rem;color:var(--accent)}
+pre{background:#0d1117;border:1px solid var(--border);border-radius:10px;padding:1.2rem;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;line-height:1.6;color:#c9d1d9}
+.kw{color:#ff7b72}.fn{color:#d2a8ff}.st{color:#a5d6ff}.cm{color:#8b949e}.op{color:#79c0ff}.nb{color:#ffa657}
+ul{list-style:none;padding:0}ul li{position:relative;padding-left:1.5rem;margin-bottom:.8rem;color:var(--muted)}
+ul li::before{content:"▸";position:absolute;left:0;color:var(--purple)}
+.actions{display:flex;gap:1rem;flex-wrap:wrap;margin-top:2rem}
+.btn{display:inline-block;padding:.7rem 1.5rem;border-radius:8px;font-weight:600;font-size:.9rem;transition:opacity .2s}
+.btn-primary{background:var(--accent);color:#fff}.btn-ghost{border:1px solid var(--border);color:var(--muted)}
+.btn:hover{opacity:.85;text-decoration:none}
+footer{border-top:1px solid var(--border);padding-top:1.5rem;margin-top:3rem;text-align:center;color:var(--muted);font-size:.8rem}
+</style>
+</head>
+<body>
+<div class="container">
+<nav><a href="../index.html">← Voltar ao portfolio</a></nav>
+
+<div class="hero">
+  <div class="number">21</div>
+  <h1>Deploy Docker + K8s</h1>
+  <p>Pipeline completo FastAPI → Docker multi-stage → Helm chart → CI/CD com GitHub Actions para Kubernetes.</p>
+  <div class="tags">
+    <span class="badge">Docker</span>
+    <span class="badge">K8s</span>
+    <span class="badge">Helm</span>
+    <span class="badge purple">GH Actions</span>
+  </div>
+</div>
+
+<section>
+  <h2>Arquitetura</h2>
+  <pre>
+┌────────────┐     ┌──────────────┐     ┌────────────┐
+│  FastAPI   │────▶│  Dockerfile  │────▶│  GHCR      │
+│  App       │     │  multi-stage │     │  Registry  │
+└────────────┘     └──────────────┘     └─────┬──────┘
+                                              │
+┌────────────┐     ┌──────────────┐     ┌─────▼──────┐
+│  GitHub    │────▶│  GH Actions  │────▶│  Helm      │
+│  Push/PR   │     │  CI pipeline │     │  Upgrade   │
+└────────────┘     │ lint+test+   │     └─────┬──────┘
+                   │ build+deploy │           │
+                   └──────────────┘     ┌─────▼──────┐
+                                        │    K8s     │
+                                        │ Deployment │
+                                        │ Service    │
+                                        │ Ingress    │
+                                        └────────────┘
+  </pre>
+</section>
+
+<section>
+  <h2>Código destaque</h2>
+  <pre><span class="cm"># Dockerfile multi-stage</span>
+<span class="kw">FROM</span> python:3.11-slim <span class="kw">AS</span> builder
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> requirements.txt .
+<span class="kw">RUN</span> pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+<span class="kw">FROM</span> python:3.11-slim
+<span class="kw">COPY</span> --from=builder /install /usr/local
+<span class="kw">COPY</span> . /app
+<span class="kw">WORKDIR</span> /app
+<span class="kw">EXPOSE</span> 8000
+<span class="kw">USER</span> nobody
+<span class="kw">CMD</span> [<span class="st">"uvicorn"</span>, <span class="st">"main:app"</span>, <span class="st">"--host"</span>, <span class="st">"0.0.0.0"</span>]
+
+<span class="cm">---</span>
+<span class="cm"># values.yaml (Helm)</span>
+replicaCount: <span class="op">2</span>
+image:
+  repository: ghcr.io/recuperarcontato4-prog/ml-api
+  tag: <span class="st">"latest"</span>
+resources:
+  limits:
+    memory: <span class="st">"512Mi"</span>
+    cpu: <span class="st">"500m"</span>
+autoscaling:
+  enabled: <span class="op">true</span>
+  minReplicas: <span class="op">2</span>
+  maxReplicas: <span class="op">8</span>
+  targetCPU: <span class="op">70</span>
+
+<span class="cm">---</span>
+<span class="cm"># .github/workflows/deploy.yml</span>
+<span class="kw">on</span>:
+  push:
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t ghcr.io/$REPO:$SHA .
+      - run: docker push ghcr.io/$REPO:$SHA
+      - run: helm upgrade ml-api ./chart
+             --set image.tag=$SHA
+</pre>
+</section>
+
+<section>
+  <h2>O que aprendi</h2>
+  <ul>
+    <li><strong>Multi-stage build</strong> — Imagem final 3x menor sem compiladores e caches de pip.</li>
+    <li><strong>Helm charts</strong> — Templates parametrizáveis permitem deploy idêntico em staging e production.</li>
+    <li><strong>CI/CD</strong> — Pipeline automático lint → test → build → deploy reduz erro humano a zero.</li>
+    <li><strong>Autoscaling</strong> — HPA do K8s escala pods baseado em CPU, absorvendo picos sem intervenção.</li>
+  </ul>
+</section>
+
+<div class="actions">
+  <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/21-deploy-docker-k8s" class="btn btn-primary" target="_blank">Ver código no GitHub</a>
+  <a href="../index.html" class="btn btn-ghost">← Voltar ao portfolio</a>
+</div>
+
+<footer>Oaken Agentes &mdash; Portfolio de IA &amp; Agentes</footer>
+</div>
+</body>
+</html>

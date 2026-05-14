@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proj 10 — Guardrails LLM | Oaken Agentes</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080b12;--card:#111828;--border:#1e2a42;--text:#e8edf8;--accent:#4f8cff;--purple:#a44dff;--muted:#7a87a0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.7}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.container{max-width:820px;margin:0 auto;padding:2rem 1.5rem}
+nav{padding:1.2rem 0;border-bottom:1px solid var(--border);margin-bottom:2.5rem}
+nav a{font-size:.95rem;color:var(--muted)}nav a:hover{color:var(--accent)}
+.proj-num{font-size:.85rem;color:var(--purple);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:.5rem}
+h1{font-size:2rem;font-weight:700;margin-bottom:.75rem}
+.desc{color:var(--muted);font-size:1.05rem;margin-bottom:1.5rem}
+.tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2.5rem}
+.tag{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:.3rem .75rem;font-size:.8rem;color:var(--accent)}
+h2{font-size:1.3rem;font-weight:700;margin:2.5rem 0 1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+pre{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.25rem;overflow-x:auto;margin:1rem 0;font-family:'JetBrains Mono',monospace;font-size:.85rem;line-height:1.6;color:var(--text)}
+.kw{color:var(--purple)}.fn{color:var(--accent)}.st{color:#34d399}.cm{color:var(--muted);font-style:italic}.op{color:#f59e42}
+ul{padding-left:1.5rem;margin:1rem 0}li{margin-bottom:.75rem;color:var(--muted)}li strong{color:var(--text)}
+.btns{display:flex;flex-wrap:wrap;gap:1rem;margin:2.5rem 0}
+.btn{display:inline-block;padding:.7rem 1.5rem;border-radius:8px;font-weight:600;font-size:.9rem;transition:transform .2s}
+.btn-primary{background:var(--accent);color:#fff}.btn-ghost{border:1px solid var(--border);color:var(--muted)}
+.btn:hover{transform:translateY(-2px)}
+footer{text-align:center;padding:2rem 0;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);margin-top:3rem}
+</style>
+</head>
+<body>
+<div class="container">
+<nav><a href="../index.html">&larr; Voltar ao portfolio</a></nav>
+
+<div class="proj-num">Projeto 10 &mdash; Especialista N3</div>
+<h1>Guardrails LLM</h1>
+<p class="desc">Middleware de seguranca: redacao de PII, filtro de toxicidade e audit log para conformidade LGPD.</p>
+<div class="tags">
+  <span class="tag">Regex</span>
+  <span class="tag">Audit Log</span>
+  <span class="tag">LGPD</span>
+  <span class="tag">Middleware</span>
+</div>
+
+<h2>Arquitetura</h2>
+<pre>
+  User Input
+       |
+  +----v-----------+
+  |  PII Redactor  |
+  |  CPF, email,   |
+  |  phone, name   |
+  +----+-----------+
+       |
+  +----v-----------+
+  |  LLM Call      |
+  +----+-----------+
+       |
+  +----v-----------+
+  |  Toxicity      |
+  |  Filter        |
+  |  score > 0.7   |
+  |  = blocked     |
+  +----+-----------+
+       |
+  +----v-----------+      +------------+
+  |  Audit Logger  |----->| audit.jsonl |
+  |  timestamp     |      +------------+
+  |  action        |
+  |  redacted_pii  |
+  +----+-----------+
+       |
+  Clean Output
+</pre>
+
+<h2>Codigo destaque</h2>
+<pre><span class="kw">import</span> re, json, hashlib
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+PII_PATTERNS = {
+    <span class="st">"cpf"</span>: r<span class="st">"\d{3}\.?\d{3}\.?\d{3}-?\d{2}"</span>,
+    <span class="st">"email"</span>: r<span class="st">"[\w.-]+@[\w.-]+\.\w+"</span>,
+    <span class="st">"phone"</span>: r<span class="st">"\+?\d{2,3}[\s-]?\d{4,5}[\s-]?\d{4}"</span>,
+}
+
+<span class="kw">def</span> <span class="fn">redact_pii</span>(text: str) -> tuple[str, list[dict]]:
+    <span class="cm">"""Remove PII e retorna texto limpo + log de redacoes."""</span>
+    findings = []
+    <span class="kw">for</span> pii_type, pattern <span class="kw">in</span> PII_PATTERNS.<span class="fn">items</span>():
+        <span class="kw">for</span> match <span class="kw">in</span> re.<span class="fn">finditer</span>(pattern, text):
+            findings.<span class="fn">append</span>({
+                <span class="st">"type"</span>: pii_type,
+                <span class="st">"hash"</span>: hashlib.<span class="fn">sha256</span>(
+                    match.<span class="fn">group</span>().<span class="fn">encode</span>()
+                ).<span class="fn">hexdigest</span>()[:<span class="op">12</span>],
+            })
+            text = text.<span class="fn">replace</span>(match.<span class="fn">group</span>(), f<span class="st">"[{pii_type.upper()}_REDACTED]"</span>)
+    <span class="kw">return</span> text, findings
+
+<span class="kw">def</span> <span class="fn">audit_log</span>(action: str, details: dict):
+    <span class="cm">"""Append-only audit trail em JSONL."""</span>
+    entry = {
+        <span class="st">"ts"</span>: datetime.<span class="fn">utcnow</span>().<span class="fn">isoformat</span>(),
+        <span class="st">"action"</span>: action,
+        **details,
+    }
+    <span class="kw">with</span> <span class="fn">open</span>(<span class="st">"audit.jsonl"</span>, <span class="st">"a"</span>) <span class="kw">as</span> f:
+        f.<span class="fn">write</span>(json.<span class="fn">dumps</span>(entry) + <span class="st">"\n"</span>)
+</pre>
+
+<h2>O que aprendi</h2>
+<ul>
+  <li><strong>Defense in depth</strong> — PII redaction na entrada + toxicity filter na saida cria duas barreiras de seguranca.</li>
+  <li><strong>LGPD compliance</strong> — hash do dado original permite auditoria sem armazenar PII em texto claro.</li>
+  <li><strong>Append-only log</strong> — JSONL imutavel garante rastreabilidade completa de cada interacao.</li>
+  <li><strong>Regex + LLM hybrid</strong> — regex pega padroes obvios; LLM classifier detecta PII contextual (nomes, enderecos).</li>
+</ul>
+
+<div class="btns">
+  <a class="btn btn-primary" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/10-guardrails-llm" target="_blank">Ver codigo no GitHub</a>
+  <a class="btn btn-ghost" href="../index.html">&larr; Voltar ao portfolio</a>
+</div>
+</div>
+<footer>Oaken Agentes &copy; 2026</footer>
+</body>
+</html>

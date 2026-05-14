@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projeto 14 — Multi-Agente Pesquisa</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080b12;--card:#111828;--border:#1e2a42;--text:#e8edf8;--accent:#4f8cff;--purple:#a44dff;--muted:#7a87a0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.7}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.container{max-width:820px;margin:0 auto;padding:2rem 1.5rem}
+nav{padding:1.2rem 0;border-bottom:1px solid var(--border);margin-bottom:2.5rem}
+nav a{font-size:.95rem;color:var(--muted)}nav a:hover{color:var(--accent)}
+.badge{display:inline-block;background:var(--border);color:var(--accent);padding:.2rem .7rem;border-radius:6px;font-size:.8rem;margin:.2rem .3rem .2rem 0;font-family:'JetBrains Mono',monospace}
+.badge.purple{color:var(--purple);border:1px solid var(--purple)}
+.hero{margin-bottom:3rem}
+.hero .number{font-size:3.5rem;font-weight:700;color:var(--purple);opacity:.5;line-height:1}
+.hero h1{font-size:2rem;font-weight:700;margin:.5rem 0 .8rem}
+.hero p{color:var(--muted);font-size:1.05rem;max-width:600px}
+.tags{margin-top:1rem}
+section{margin-bottom:3rem}
+section h2{font-size:1.3rem;font-weight:700;margin-bottom:1rem;color:var(--accent)}
+pre{background:#0d1117;border:1px solid var(--border);border-radius:10px;padding:1.2rem;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;line-height:1.6;color:#c9d1d9}
+.kw{color:#ff7b72}.fn{color:#d2a8ff}.st{color:#a5d6ff}.cm{color:#8b949e}.op{color:#79c0ff}.nb{color:#ffa657}
+ul{list-style:none;padding:0}
+ul li{position:relative;padding-left:1.5rem;margin-bottom:.8rem;color:var(--muted)}
+ul li::before{content:"▸";position:absolute;left:0;color:var(--purple)}
+.actions{display:flex;gap:1rem;flex-wrap:wrap;margin-top:2rem}
+.btn{display:inline-block;padding:.7rem 1.5rem;border-radius:8px;font-weight:600;font-size:.9rem;transition:opacity .2s}
+.btn-primary{background:var(--accent);color:#fff}.btn-ghost{border:1px solid var(--border);color:var(--muted)}
+.btn:hover{opacity:.85;text-decoration:none}
+footer{border-top:1px solid var(--border);padding-top:1.5rem;margin-top:3rem;text-align:center;color:var(--muted);font-size:.8rem}
+</style>
+</head>
+<body>
+<div class="container">
+<nav><a href="../index.html">← Voltar ao portfolio</a></nav>
+
+<div class="hero">
+  <div class="number">14</div>
+  <h1>Multi-Agente Pesquisa</h1>
+  <p>Três agentes colaborativos — Pesquisador, Crítico e Escritor — produzem relatórios completos com fontes verificadas.</p>
+  <div class="tags">
+    <span class="badge">LangGraph</span>
+    <span class="badge">DuckDuckGo</span>
+    <span class="badge purple">Multi-Agent</span>
+  </div>
+</div>
+
+<section>
+  <h2>Arquitetura</h2>
+  <pre>
+                    ┌─────────────┐
+            ┌──────│ Supervisor  │──────┐
+            │      └─────────────┘      │
+            ▼            │              ▼
+   ┌──────────────┐      ▼      ┌─────────────┐
+   │  Pesquisador │  ┌────────┐ │   Escritor   │
+   │  (DuckDuckGo)│  │Crítico │ │  (Markdown)  │
+   │  search+fetch│  │review  │ │  format+cite │
+   └──────┬───────┘  └───┬────┘ └──────┬───────┘
+          │               │             │
+          └───────────────┴─────────────┘
+                    ▼
+             ┌────────────┐
+             │  Relatório │
+             │  Final .md │
+             └────────────┘
+  </pre>
+</section>
+
+<section>
+  <h2>Código destaque</h2>
+  <pre><span class="kw">from</span> langgraph.graph <span class="kw">import</span> StateGraph, END
+<span class="kw">from</span> langchain_community.tools <span class="kw">import</span> DuckDuckGoSearchResults
+
+<span class="kw">class</span> <span class="fn">ResearchState</span>(TypedDict):
+    topic: <span class="nb">str</span>
+    sources: <span class="nb">list</span>[<span class="nb">dict</span>]
+    draft: <span class="nb">str</span>
+    feedback: <span class="nb">str</span>
+    final_report: <span class="nb">str</span>
+
+<span class="kw">def</span> <span class="fn">researcher</span>(state: ResearchState) -> ResearchState:
+    <span class="st">"""Pesquisa fontes via DuckDuckGo."""</span>
+    search = DuckDuckGoSearchResults(max_results=<span class="op">8</span>)
+    results = search.invoke(state[<span class="st">"topic"</span>])
+    sources = parse_and_rank(results)
+    <span class="kw">return</span> {<span class="st">"sources"</span>: sources}
+
+<span class="kw">def</span> <span class="fn">critic</span>(state: ResearchState) -> ResearchState:
+    <span class="st">"""Avalia cobertura e factos do draft."""</span>
+    feedback = llm.invoke(CRITIC_PROMPT.format(
+        draft=state[<span class="st">"draft"</span>],
+        sources=state[<span class="st">"sources"</span>]
+    ))
+    <span class="kw">return</span> {<span class="st">"feedback"</span>: feedback}
+
+<span class="kw">def</span> <span class="fn">writer</span>(state: ResearchState) -> ResearchState:
+    <span class="st">"""Gera relatório final em Markdown com citações."""</span>
+    report = llm.invoke(WRITER_PROMPT.format(
+        sources=state[<span class="st">"sources"</span>],
+        feedback=state[<span class="st">"feedback"</span>]
+    ))
+    <span class="kw">return</span> {<span class="st">"final_report"</span>: report}
+</pre>
+</section>
+
+<section>
+  <h2>O que aprendi</h2>
+  <ul>
+    <li><strong>Colaboração multi-agente</strong> — Separar responsabilidades (pesquisa, crítica, escrita) melhora qualidade vs. agente monolítico.</li>
+    <li><strong>Relatórios com fontes</strong> — Forçar citações inline reduz alucinações e aumenta confiança do leitor.</li>
+    <li><strong>Supervisor pattern</strong> — Um nó coordenador decide a ordem de execução e quando terminar.</li>
+    <li><strong>Search grounding</strong> — DuckDuckGo como fallback gratuito para web search em agentes experimentais.</li>
+  </ul>
+</section>
+
+<div class="actions">
+  <a href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/14-multi-agente-pesquisa" class="btn btn-primary" target="_blank">Ver código no GitHub</a>
+  <a href="../index.html" class="btn btn-ghost">← Voltar ao portfolio</a>
+</div>
+
+<footer>Oaken Agentes &mdash; Portfolio de IA &amp; Agentes</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proj 05 — Chatbot RAG PDFs | Oaken Agentes</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080b12;--card:#111828;--border:#1e2a42;--text:#e8edf8;--accent:#4f8cff;--purple:#a44dff;--muted:#7a87a0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.7}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.container{max-width:820px;margin:0 auto;padding:2rem 1.5rem}
+nav{padding:1.2rem 0;border-bottom:1px solid var(--border);margin-bottom:2.5rem}
+nav a{font-size:.95rem;color:var(--muted)}nav a:hover{color:var(--accent)}
+.proj-num{font-size:.85rem;color:var(--purple);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:.5rem}
+h1{font-size:2rem;font-weight:700;margin-bottom:.75rem}
+.desc{color:var(--muted);font-size:1.05rem;margin-bottom:1.5rem}
+.tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2.5rem}
+.tag{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:.3rem .75rem;font-size:.8rem;color:var(--accent)}
+h2{font-size:1.3rem;font-weight:700;margin:2.5rem 0 1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+pre{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.25rem;overflow-x:auto;margin:1rem 0;font-family:'JetBrains Mono',monospace;font-size:.85rem;line-height:1.6;color:var(--text)}
+.kw{color:var(--purple)}.fn{color:var(--accent)}.st{color:#34d399}.cm{color:var(--muted);font-style:italic}.op{color:#f59e42}
+ul{padding-left:1.5rem;margin:1rem 0}li{margin-bottom:.75rem;color:var(--muted)}li strong{color:var(--text)}
+.btns{display:flex;flex-wrap:wrap;gap:1rem;margin:2.5rem 0}
+.btn{display:inline-block;padding:.7rem 1.5rem;border-radius:8px;font-weight:600;font-size:.9rem;transition:transform .2s}
+.btn-primary{background:var(--accent);color:#fff}.btn-ghost{border:1px solid var(--border);color:var(--muted)}
+.btn:hover{transform:translateY(-2px)}
+footer{text-align:center;padding:2rem 0;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);margin-top:3rem}
+</style>
+</head>
+<body>
+<div class="container">
+<nav><a href="../index.html">&larr; Voltar ao portfolio</a></nav>
+
+<div class="proj-num">Projeto 05 &mdash; Especialista N1</div>
+<h1>Chatbot RAG PDFs</h1>
+<p class="desc">Chatbot com Retrieval-Augmented Generation sobre documentos PDF, interface Streamlit e vector store ChromaDB.</p>
+<div class="tags">
+  <span class="tag">Streamlit</span>
+  <span class="tag">LangChain</span>
+  <span class="tag">ChromaDB</span>
+  <span class="tag">OpenAI</span>
+</div>
+
+<h2>Arquitetura</h2>
+<pre>
+  PDF Documents
+       |
+  +----v-----------+
+  |  PDF Loader    |
+  |  PyPDFLoader   |
+  +----+-----------+
+       |
+  +----v-----------+
+  |  Text Splitter |
+  |  chunk_size    |
+  |  overlap       |
+  +----+-----------+
+       |
+  +----v-----------+
+  |  Embeddings    |
+  |  text-embed-3  |
+  +----+-----------+
+       |
+  +----v-----------+
+  |  ChromaDB      |
+  |  Vector Store  |
+  +----+-----------+
+       |
+  User Query ------+
+       |            |
+  +----v-----------v--+
+  |  Similarity Search |
+  |  top_k = 4         |
+  +----+---------------+
+       |
+  +----v-----------+
+  |  LLM + Context |
+  |  Answer        |
+  +-----------------+
+</pre>
+
+<h2>Codigo destaque</h2>
+<pre><span class="kw">from</span> langchain_community.document_loaders <span class="kw">import</span> PyPDFLoader
+<span class="kw">from</span> langchain.text_splitter <span class="kw">import</span> RecursiveCharacterTextSplitter
+<span class="kw">from</span> langchain_community.vectorstores <span class="kw">import</span> Chroma
+<span class="kw">from</span> langchain_openai <span class="kw">import</span> OpenAIEmbeddings, ChatOpenAI
+
+<span class="kw">def</span> <span class="fn">build_retriever</span>(pdf_path: str):
+    <span class="cm">"""Carrega PDF, chunka e indexa em ChromaDB."""</span>
+    docs = <span class="fn">PyPDFLoader</span>(pdf_path).<span class="fn">load</span>()
+
+    splitter = <span class="fn">RecursiveCharacterTextSplitter</span>(
+        chunk_size=<span class="op">800</span>,
+        chunk_overlap=<span class="op">200</span>,
+        separators=[<span class="st">"\n\n"</span>, <span class="st">"\n"</span>, <span class="st">" "</span>]
+    )
+    chunks = splitter.<span class="fn">split_documents</span>(docs)
+
+    vectorstore = Chroma.<span class="fn">from_documents</span>(
+        documents=chunks,
+        embedding=<span class="fn">OpenAIEmbeddings</span>(model=<span class="st">"text-embedding-3-small"</span>)
+    )
+    <span class="kw">return</span> vectorstore.<span class="fn">as_retriever</span>(search_kwargs={<span class="st">"k"</span>: <span class="op">4</span>})
+
+<span class="kw">def</span> <span class="fn">ask</span>(retriever, question: str) -> str:
+    docs = retriever.<span class="fn">invoke</span>(question)
+    context = <span class="st">"\n"</span>.<span class="fn">join</span>(d.page_content <span class="kw">for</span> d <span class="kw">in</span> docs)
+    llm = <span class="fn">ChatOpenAI</span>(model=<span class="st">"gpt-4o-mini"</span>)
+    <span class="kw">return</span> llm.<span class="fn">invoke</span>(
+        f<span class="st">"Contexto:\n{context}\n\nPergunta: {question}"</span>
+    ).content
+</pre>
+
+<h2>O que aprendi</h2>
+<ul>
+  <li><strong>Chunking strategy</strong> — chunk_size e overlap impactam diretamente a qualidade do retrieval.</li>
+  <li><strong>Vector search</strong> — embeddings + cosine similarity superam keyword search para perguntas semanticas.</li>
+  <li><strong>Context window management</strong> — top_k muito alto estoura o contexto; muito baixo perde informacao.</li>
+  <li><strong>Streamlit para demos</strong> — prototipo funcional em horas, ideal para validar com stakeholders.</li>
+</ul>
+
+<div class="btns">
+  <a class="btn btn-primary" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/05-chatbot-rag-pdfs" target="_blank">Ver codigo no GitHub</a>
+  <a class="btn btn-ghost" href="../index.html">&larr; Voltar ao portfolio</a>
+</div>
+</div>
+<footer>Oaken Agentes &copy; 2026</footer>
+</body>
+</html>

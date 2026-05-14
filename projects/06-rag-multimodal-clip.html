@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proj 06 — RAG Multimodal CLIP | Oaken Agentes</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080b12;--card:#111828;--border:#1e2a42;--text:#e8edf8;--accent:#4f8cff;--purple:#a44dff;--muted:#7a87a0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.7}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.container{max-width:820px;margin:0 auto;padding:2rem 1.5rem}
+nav{padding:1.2rem 0;border-bottom:1px solid var(--border);margin-bottom:2.5rem}
+nav a{font-size:.95rem;color:var(--muted)}nav a:hover{color:var(--accent)}
+.proj-num{font-size:.85rem;color:var(--purple);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:.5rem}
+h1{font-size:2rem;font-weight:700;margin-bottom:.75rem}
+.desc{color:var(--muted);font-size:1.05rem;margin-bottom:1.5rem}
+.tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2.5rem}
+.tag{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:.3rem .75rem;font-size:.8rem;color:var(--accent)}
+h2{font-size:1.3rem;font-weight:700;margin:2.5rem 0 1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+pre{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.25rem;overflow-x:auto;margin:1rem 0;font-family:'JetBrains Mono',monospace;font-size:.85rem;line-height:1.6;color:var(--text)}
+.kw{color:var(--purple)}.fn{color:var(--accent)}.st{color:#34d399}.cm{color:var(--muted);font-style:italic}.op{color:#f59e42}
+ul{padding-left:1.5rem;margin:1rem 0}li{margin-bottom:.75rem;color:var(--muted)}li strong{color:var(--text)}
+.btns{display:flex;flex-wrap:wrap;gap:1rem;margin:2.5rem 0}
+.btn{display:inline-block;padding:.7rem 1.5rem;border-radius:8px;font-weight:600;font-size:.9rem;transition:transform .2s}
+.btn-primary{background:var(--accent);color:#fff}.btn-ghost{border:1px solid var(--border);color:var(--muted)}
+.btn:hover{transform:translateY(-2px)}
+footer{text-align:center;padding:2rem 0;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);margin-top:3rem}
+</style>
+</head>
+<body>
+<div class="container">
+<nav><a href="../index.html">&larr; Voltar ao portfolio</a></nav>
+
+<div class="proj-num">Projeto 06 &mdash; Especialista N1</div>
+<h1>RAG Multimodal CLIP</h1>
+<p class="desc">Busca cross-modal: pesquise com texto e encontre imagens, ou vice-versa, usando embeddings CLIP.</p>
+<div class="tags">
+  <span class="tag">CLIP</span>
+  <span class="tag">ChromaDB</span>
+  <span class="tag">PyTorch</span>
+  <span class="tag">Transformers</span>
+</div>
+
+<h2>Arquitetura</h2>
+<pre>
+  Indexacao:
+  +-----------+     +-----------+
+  |  Images   |     |  Texts    |
+  +-----+-----+     +-----+-----+
+        |                  |
+  +-----v------------------v-----+
+  |       CLIP Encoder           |
+  |  (shared embedding space)    |
+  +-----+------------------------+
+        |
+  +-----v-----------+
+  |   ChromaDB      |
+  |   Vector Store  |
+  +------------------+
+
+  Busca:
+  Query (text OR image)
+        |
+  +-----v-----------+
+  |  CLIP Encode    |
+  +-----+-----------+
+        |
+  +-----v-----------+
+  |  Cosine Search  |
+  |  top_k results  |
+  +------------------+
+</pre>
+
+<h2>Codigo destaque</h2>
+<pre><span class="kw">import</span> torch
+<span class="kw">from</span> transformers <span class="kw">import</span> CLIPModel, CLIPProcessor
+<span class="kw">from</span> PIL <span class="kw">import</span> Image
+<span class="kw">import</span> chromadb
+
+model = CLIPModel.<span class="fn">from_pretrained</span>(<span class="st">"openai/clip-vit-base-patch32"</span>)
+processor = CLIPProcessor.<span class="fn">from_pretrained</span>(<span class="st">"openai/clip-vit-base-patch32"</span>)
+
+<span class="kw">def</span> <span class="fn">encode_image</span>(img_path: str) -> list[float]:
+    <span class="cm">"""Gera embedding de imagem via CLIP."""</span>
+    image = Image.<span class="fn">open</span>(img_path)
+    inputs = <span class="fn">processor</span>(images=image, return_tensors=<span class="st">"pt"</span>)
+    <span class="kw">with</span> torch.<span class="fn">no_grad</span>():
+        emb = model.<span class="fn">get_image_features</span>(**inputs)
+    <span class="kw">return</span> emb.<span class="fn">squeeze</span>().<span class="fn">tolist</span>()
+
+<span class="kw">def</span> <span class="fn">encode_text</span>(text: str) -> list[float]:
+    <span class="cm">"""Gera embedding de texto via CLIP."""</span>
+    inputs = <span class="fn">processor</span>(text=[text], return_tensors=<span class="st">"pt"</span>)
+    <span class="kw">with</span> torch.<span class="fn">no_grad</span>():
+        emb = model.<span class="fn">get_text_features</span>(**inputs)
+    <span class="kw">return</span> emb.<span class="fn">squeeze</span>().<span class="fn">tolist</span>()
+
+<span class="kw">def</span> <span class="fn">search</span>(query: str, collection, top_k: int = <span class="op">5</span>):
+    <span class="cm">"""Busca cross-modal: texto busca imagens."""</span>
+    q_emb = <span class="fn">encode_text</span>(query)
+    results = collection.<span class="fn">query</span>(query_embeddings=[q_emb], n_results=top_k)
+    <span class="kw">return</span> results
+</pre>
+
+<h2>O que aprendi</h2>
+<ul>
+  <li><strong>Espaco compartilhado de embeddings</strong> — CLIP projeta texto e imagem no mesmo espaco vetorial, permitindo busca cross-modal.</li>
+  <li><strong>Normalizacao importa</strong> — normalizar embeddings antes do cosine similarity melhora drasticamente os resultados.</li>
+  <li><strong>Trade-off modelo vs velocidade</strong> — ViT-B/32 e rapido; ViT-L/14 e mais preciso mas 4x mais lento.</li>
+  <li><strong>Batch processing</strong> — indexar milhares de imagens exige batching + GPU para viabilizar.</li>
+</ul>
+
+<div class="btns">
+  <a class="btn btn-primary" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/06-rag-multimodal-clip" target="_blank">Ver codigo no GitHub</a>
+  <a class="btn btn-ghost" href="../index.html">&larr; Voltar ao portfolio</a>
+</div>
+</div>
+<footer>Oaken Agentes &copy; 2026</footer>
+</body>
+</html>

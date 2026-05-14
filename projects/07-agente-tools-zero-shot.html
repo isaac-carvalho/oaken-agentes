@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proj 07 — Agente ReAct Zero-Shot | Oaken Agentes</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080b12;--card:#111828;--border:#1e2a42;--text:#e8edf8;--accent:#4f8cff;--purple:#a44dff;--muted:#7a87a0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.7}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.container{max-width:820px;margin:0 auto;padding:2rem 1.5rem}
+nav{padding:1.2rem 0;border-bottom:1px solid var(--border);margin-bottom:2.5rem}
+nav a{font-size:.95rem;color:var(--muted)}nav a:hover{color:var(--accent)}
+.proj-num{font-size:.85rem;color:var(--purple);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:.5rem}
+h1{font-size:2rem;font-weight:700;margin-bottom:.75rem}
+.desc{color:var(--muted);font-size:1.05rem;margin-bottom:1.5rem}
+.tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2.5rem}
+.tag{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:.3rem .75rem;font-size:.8rem;color:var(--accent)}
+h2{font-size:1.3rem;font-weight:700;margin:2.5rem 0 1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+pre{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.25rem;overflow-x:auto;margin:1rem 0;font-family:'JetBrains Mono',monospace;font-size:.85rem;line-height:1.6;color:var(--text)}
+.kw{color:var(--purple)}.fn{color:var(--accent)}.st{color:#34d399}.cm{color:var(--muted);font-style:italic}.op{color:#f59e42}
+ul{padding-left:1.5rem;margin:1rem 0}li{margin-bottom:.75rem;color:var(--muted)}li strong{color:var(--text)}
+.btns{display:flex;flex-wrap:wrap;gap:1rem;margin:2.5rem 0}
+.btn{display:inline-block;padding:.7rem 1.5rem;border-radius:8px;font-weight:600;font-size:.9rem;transition:transform .2s}
+.btn-primary{background:var(--accent);color:#fff}.btn-ghost{border:1px solid var(--border);color:var(--muted)}
+.btn:hover{transform:translateY(-2px)}
+footer{text-align:center;padding:2rem 0;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);margin-top:3rem}
+</style>
+</head>
+<body>
+<div class="container">
+<nav><a href="../index.html">&larr; Voltar ao portfolio</a></nav>
+
+<div class="proj-num">Projeto 07 &mdash; Especialista N2</div>
+<h1>Agente ReAct Zero-Shot</h1>
+<p class="desc">Loop ReAct (Reason + Act) com 3 ferramentas: busca web, calculadora e Wikipedia. Sem fine-tuning.</p>
+<div class="tags">
+  <span class="tag">ReAct</span>
+  <span class="tag">DuckDuckGo</span>
+  <span class="tag">numexpr</span>
+  <span class="tag">LLM</span>
+</div>
+
+<h2>Arquitetura</h2>
+<pre>
+  User Query
+       |
+  +----v-----------+
+  |   ReAct Loop   |
+  |                |
+  |  +----------+  |
+  |  | Thought  |  |
+  |  +----+-----+  |
+  |       |        |
+  |  +----v-----+  |
+  |  | Action   |  |
+  |  | select   |  |
+  |  +----+-----+  |
+  |       |        |
+  |  +--+-v-+--+   |
+  |  |S |C |W |   |     S = Search
+  |  +--+--+--+   |     C = Calculator
+  |       |        |     W = Wikipedia
+  |  +----v-----+  |
+  |  | Observe  |  |
+  |  +----+-----+  |
+  |       |        |
+  |  (loop until   |
+  |   final answer)|
+  +----+-----------+
+       |
+  Final Answer
+</pre>
+
+<h2>Codigo destaque</h2>
+<pre><span class="kw">import</span> re
+<span class="kw">from</span> duckduckgo_search <span class="kw">import</span> DDGS
+<span class="kw">import</span> numexpr
+
+TOOLS = {
+    <span class="st">"search"</span>: <span class="kw">lambda</span> q: DDGS().text(q, max_results=<span class="op">3</span>),
+    <span class="st">"calc"</span>: <span class="kw">lambda</span> expr: str(numexpr.<span class="fn">evaluate</span>(expr)),
+    <span class="st">"wiki"</span>: <span class="kw">lambda</span> q: <span class="fn">fetch_wikipedia</span>(q),
+}
+
+<span class="kw">def</span> <span class="fn">react_loop</span>(query: str, max_steps: int = <span class="op">8</span>) -> str:
+    <span class="cm">"""Loop ReAct: Thought -> Action -> Observation."""</span>
+    history = f<span class="st">"Question: {query}\n"</span>
+
+    <span class="kw">for</span> step <span class="kw">in</span> <span class="fn">range</span>(max_steps):
+        response = <span class="fn">call_llm</span>(REACT_PROMPT + history)
+
+        <span class="cm"># Extrair acao do response</span>
+        <span class="kw">if</span> <span class="st">"Final Answer:"</span> <span class="kw">in</span> response:
+            <span class="kw">return</span> response.<span class="fn">split</span>(<span class="st">"Final Answer:"</span>)[<span class="op">1</span>].<span class="fn">strip</span>()
+
+        match = re.<span class="fn">search</span>(r<span class="st">"Action: (\w+)\[(.+?)\]"</span>, response)
+        <span class="kw">if</span> match:
+            tool, arg = match.<span class="fn">groups</span>()
+            observation = TOOLS[tool](arg)
+            history += f<span class="st">"{response}\nObservation: {observation}\n"</span>
+
+    <span class="kw">return</span> <span class="st">"Limite de passos atingido."</span>
+</pre>
+
+<h2>O que aprendi</h2>
+<ul>
+  <li><strong>ReAct pattern</strong> — intercalar raciocinio e acao permite ao LLM decompor problemas complexos passo a passo.</li>
+  <li><strong>Tool dispatch por regex</strong> — parsear "Action: tool[arg]" e simples e robusto para agentes basicos.</li>
+  <li><strong>Limite de steps</strong> — sem max_steps, o agente pode entrar em loop infinito; guardrail essencial.</li>
+  <li><strong>Zero-shot vs few-shot</strong> — GPT-4o-mini funciona zero-shot com o prompt certo; modelos menores precisam de exemplos.</li>
+</ul>
+
+<div class="btns">
+  <a class="btn btn-primary" href="https://github.com/recuperarcontato4-prog/oaken-agentes/tree/main/projects/07-agente-tools-zero-shot" target="_blank">Ver codigo no GitHub</a>
+  <a class="btn btn-ghost" href="../index.html">&larr; Voltar ao portfolio</a>
+</div>
+</div>
+<footer>Oaken Agentes &copy; 2026</footer>
+</body>
+</html>
