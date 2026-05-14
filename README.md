@@ -1,7 +1,8 @@
 # Oaken Agentes — Portfólio de IA & Agentes
 
-> 21 projetos práticos cobrindo as carreiras **Especialista em IA** e **Engenharia de Agentes de IA** (Alura).
+> 25 projetos práticos cobrindo as carreiras **Especialista em IA** e **Engenharia de Agentes de IA** (Alura).
 > Pensado para demonstrar, em poucos minutos, capacidade técnica ponta-a-ponta: do primeiro script Python até deploy de agentes em Kubernetes.
+> Cada projeto tem uma [página de detalhe](https://recuperarcontato4-prog.github.io/oaken-agentes/) com arquitetura, código e aprendizados.
 
 **Portal visual:** abra [`index.html`](./index.html) no navegador — ou veja o [roadmap](./docs/ROADMAP.md).
 **Landing original do produto Oaken IA:** [`pito-presentation.html`](./pito-presentation.html).
@@ -16,13 +17,13 @@ projects/
 ├── 01-python-api-llm-helper/     # Fundamentos
 ├── 02-pandas-ia-analista/
 ├── 03-eval-prompts-framework/
-├── 04-12 ...                     # Trilha Especialista em IA
-└── 13-21 ...                     # Trilha Engenharia de Agentes de IA
+├── 04-12, 22-23 ...              # Trilha Especialista em IA
+└── 13-21, 24-25 ...              # Trilha Engenharia de Agentes de IA
 ```
 
 Cada pasta tem o mesmo padrão: `README.md` (objetivo, stack, como rodar), `requirements.txt`, `.env.example` quando preciso, e um `main.py` (ou equivalente) rodável.
 
-## Os 21 projetos
+## Os 25 projetos
 
 ### Fundamentos — base compartilhada
 | # | Projeto | Stack-chave |
@@ -43,6 +44,8 @@ Cada pasta tem o mesmo padrão: `README.md` (objetivo, stack, como rodar), `requ
 | 10 | [guardrails-llm](./projects/10-guardrails-llm/) | Presidio, Detoxify |
 | 11 | [deploy-aws-bedrock](./projects/11-deploy-aws-bedrock/) | boto3, Terraform, Bedrock |
 | 12 | [lgpd-compliance-toolkit](./projects/12-lgpd-compliance-toolkit/) | Presidio, FastAPI |
+| 22 | [geoai-mentor](https://github.com/recuperarcontato4-prog/geoai-mentor) | LangChain, LCEL, Memory |
+| 23 | [bank-classifier](https://github.com/recuperarcontato4-prog/bank-classifier) | HuggingFace, Zero-Shot, NLI |
 
 ### Engenharia de Agentes de IA
 | # | Projeto | Stack-chave |
@@ -56,6 +59,8 @@ Cada pasta tem o mesmo padrão: `README.md` (objetivo, stack, como rodar), `requ
 | 19 | [mlops-mlflow-dvc](./projects/19-mlops-mlflow-dvc/) | MLflow, DVC |
 | 20 | [aiops-langfuse](./projects/20-aiops-langfuse/) | Langfuse, LangChain |
 | 21 | [deploy-docker-k8s](./projects/21-deploy-docker-k8s/) | Docker, Kubernetes, Helm |
+| 24 | [moderacao-ia](https://github.com/recuperarcontato4-prog/moderacao-ia) | LangGraph, HITL, Multi-Agent |
+| 25 | [playcatch](https://github.com/recuperarcontato4-prog/playcatch) | HuggingFace, PyTorch, Gradio |
 
 ## Setup rápido
 
