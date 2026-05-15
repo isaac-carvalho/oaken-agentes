@@ -1,7 +1,10 @@
 """Indexa imagens (.jpg/.png) e textos (.txt) de um diretório."""
 from __future__ import annotations
 
+import logging
 from pathlib import Path
+
+log = logging.getLogger(__name__)
 
 import typer
 

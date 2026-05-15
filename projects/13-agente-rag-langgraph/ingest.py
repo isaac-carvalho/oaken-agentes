@@ -1,7 +1,10 @@
 """Indexa arquivos .txt/.md em ChromaDB."""
 from __future__ import annotations
 
+import logging
 from pathlib import Path
+
+log = logging.getLogger(__name__)
 
 import chromadb
 import typer

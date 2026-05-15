@@ -1,7 +1,10 @@
 """Carregamento padronizado de variáveis de ambiente (.env)."""
 from __future__ import annotations
 
+import logging
 import os
+
+log = logging.getLogger(__name__)
 from pathlib import Path
 
 

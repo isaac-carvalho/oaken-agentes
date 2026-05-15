@@ -1,7 +1,10 @@
 """Dashboard de explicabilidade (Streamlit + SHAP)."""
 from __future__ import annotations
 
+import logging
 from pathlib import Path
+
+log = logging.getLogger(__name__)
 
 import joblib
 import pandas as pd

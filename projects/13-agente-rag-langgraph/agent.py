@@ -1,9 +1,12 @@
 """Grafo LangGraph: retrieve → answer → critic → refine."""
 from __future__ import annotations
 
+import logging
 import sys
 from pathlib import Path
 from typing import Annotated, TypedDict
+
+log = logging.getLogger(__name__)
 
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph

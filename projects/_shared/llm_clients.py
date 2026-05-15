@@ -86,7 +86,7 @@ class AnthropicClient:
     def __init__(self, api_key: str, default_model: str = "claude-sonnet-4-6") -> None:
         from anthropic import Anthropic  # import lazy
 
-        self._client = Anthropic(api_key=api_key)
+        self._client = Anthropic(api_key=api_key, timeout=30.0)
         self._default_model = default_model
 
     def complete(self, prompt: str, *, system: str | None = None, model: str | None = None) -> LLMResponse:

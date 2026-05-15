@@ -6,10 +6,13 @@ padrão é desabilitado. Para habilitar (use só em ambiente descartável):
 """
 from __future__ import annotations
 
+import logging
 import os
 import subprocess
 import sys
 import tempfile
+
+log = logging.getLogger(__name__)
 from pathlib import Path
 
 

@@ -1,9 +1,12 @@
 """Sistema multi-agente: Pesquisador → Crítico → Escritor."""
 from __future__ import annotations
 
+import logging
 import sys
 from pathlib import Path
 from typing import TypedDict
+
+log = logging.getLogger(__name__)
 
 import typer
 from langgraph.graph import END, START, StateGraph

@@ -15,8 +15,13 @@ _log.setLevel(logging.INFO)
 
 def _bedrock_call(message: str) -> str:
     import boto3
+    from botocore.config import Config
 
-    client = boto3.client("bedrock-runtime", region_name=os.environ.get("AWS_REGION", "us-east-1"))
+    client = boto3.client(
+        "bedrock-runtime",
+        region_name=os.environ.get("AWS_REGION", "us-east-1"),
+        config=Config(read_timeout=30, connect_timeout=10),
+    )
     body = json.dumps({
         "anthropic_version": "bedrock-2023-05-31",
         "max_tokens": 512,

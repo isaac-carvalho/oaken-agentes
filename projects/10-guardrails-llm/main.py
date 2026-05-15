@@ -1,10 +1,13 @@
 """Demo dos guardrails."""
 from __future__ import annotations
 
+import logging
 import sys
 from pathlib import Path
 
 import typer
+
+log = logging.getLogger(__name__)
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))

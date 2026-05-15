@@ -1,9 +1,12 @@
 """Treina + registra no MLflow."""
 import json
 import logging
+import os
 from pathlib import Path
 
 log = logging.getLogger(__name__)
+
+os.environ.setdefault("MLFLOW_HTTP_REQUEST_TIMEOUT", "30")
 
 import joblib
 import mlflow

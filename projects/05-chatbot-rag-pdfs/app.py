@@ -1,8 +1,11 @@
 """Streamlit UI para chatbot RAG sobre PDFs locais."""
 from __future__ import annotations
 
+import logging
 import sys
 from pathlib import Path
+
+log = logging.getLogger(__name__)
 
 import streamlit as st
 

@@ -1,7 +1,10 @@
 """Busca cross-modal: query por texto OU imagem."""
 from __future__ import annotations
 
+import logging
 from pathlib import Path
+
+log = logging.getLogger(__name__)
 
 import typer
 

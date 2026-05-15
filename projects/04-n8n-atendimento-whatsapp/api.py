@@ -1,8 +1,11 @@
 """API de atendimento que classifica intenção e gera resposta."""
 from __future__ import annotations
 
+import logging
 import sys
 from pathlib import Path
+
+log = logging.getLogger(__name__)
 
 from fastapi import FastAPI
 from pydantic import BaseModel, Field

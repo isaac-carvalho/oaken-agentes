@@ -1,7 +1,11 @@
 """CLI conversacional usando o grafo."""
 from __future__ import annotations
 
+import logging
+
 import typer
+
+log = logging.getLogger(__name__)
 
 from agent import build_graph
 

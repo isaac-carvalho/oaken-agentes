@@ -2,8 +2,11 @@
 from __future__ import annotations
 
 import json
+import logging
 import sys
 import time
+
+log = logging.getLogger(__name__)
 from datetime import datetime, timezone
 from pathlib import Path
 

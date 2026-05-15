@@ -1,6 +1,13 @@
 """Promove a melhor versão do modelo registrado para 'Production' se passar do AUC mínimo."""
+import logging
+import os
+
+os.environ.setdefault("MLFLOW_HTTP_REQUEST_TIMEOUT", "30")
+
 import mlflow
 from mlflow.tracking import MlflowClient
+
+log = logging.getLogger(__name__)
 
 MIN_AUC = 0.70
 MODEL_NAME = "oaken-clf"
@@ -10,7 +17,7 @@ def main() -> None:
     client = MlflowClient()
     versions = client.search_model_versions(f"name='{MODEL_NAME}'")
     if not versions:
-        print(f"Nenhuma versão registrada para {MODEL_NAME}. Rode `dvc repro` primeiro.")
+        log.info("Nenhuma versão registrada para %s. Rode `dvc repro` primeiro.", MODEL_NAME)
         return
     best = None
     for v in versions:
@@ -19,15 +26,15 @@ def main() -> None:
         if auc >= MIN_AUC and (best is None or auc > best[1]):
             best = (v, auc)
     if not best:
-        print(f"Nenhuma versão atinge AUC >= {MIN_AUC}.")
+        log.info("Nenhuma versão atinge AUC >= %s.", MIN_AUC)
         return
     v, auc = best
     try:
         client.set_registered_model_alias(MODEL_NAME, "production", v.version)
-        print(f"Promovida versão {v.version} para Production via alias (auc={auc:.3f})")
+        log.info("Promovida versão %s para Production via alias (auc=%.3f)", v.version, auc)
     except (AttributeError, Exception):
         client.transition_model_version_stage(name=MODEL_NAME, version=v.version, stage="Production", archive_existing_versions=True)
-        print(f"Promovida versão {v.version} para Production via stage (auc={auc:.3f})")
+        log.info("Promovida versão %s para Production via stage (auc=%.3f)", v.version, auc)
 
 
 if __name__ == "__main__":

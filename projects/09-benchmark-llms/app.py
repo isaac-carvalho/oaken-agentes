@@ -1,6 +1,7 @@
 """Benchmark side-by-side de LLMs."""
 from __future__ import annotations
 
+import logging
 import sys
 import time
 from pathlib import Path
@@ -8,6 +9,8 @@ from pathlib import Path
 import pandas as pd
 import requests
 import streamlit as st
+
+log = logging.getLogger(__name__)
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))

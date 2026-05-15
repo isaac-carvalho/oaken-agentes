@@ -1,8 +1,11 @@
 """EDA automática com narrativa gerada por LLM."""
 from __future__ import annotations
 
+import logging
 import sys
 from pathlib import Path
+
+log = logging.getLogger(__name__)
 
 import pandas as pd
 import typer

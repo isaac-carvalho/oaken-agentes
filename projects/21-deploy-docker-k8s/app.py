@@ -2,9 +2,12 @@
 from __future__ import annotations
 
 import functools
+import logging
 import os
 import secrets
 import sys
+
+log = logging.getLogger(__name__)
 from pathlib import Path
 
 from fastapi import FastAPI, Header, HTTPException

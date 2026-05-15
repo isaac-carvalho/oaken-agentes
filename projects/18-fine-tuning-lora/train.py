@@ -1,7 +1,10 @@
 """Fine-tuning LoRA com PEFT."""
 from __future__ import annotations
 
+import logging
 from pathlib import Path
+
+log = logging.getLogger(__name__)
 
 import torch
 import typer

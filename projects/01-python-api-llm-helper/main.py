@@ -1,9 +1,12 @@
 """CLI helper que roteia tarefas para um provedor LLM."""
 from __future__ import annotations
 
+import logging
 import sys
 import time
 from pathlib import Path
+
+log = logging.getLogger(__name__)
 
 import typer
 

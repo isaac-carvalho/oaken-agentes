@@ -2,8 +2,11 @@
 from __future__ import annotations
 
 import ast
+import logging
 import re
 import sys
+
+log = logging.getLogger(__name__)
 from pathlib import Path
 
 import typer
