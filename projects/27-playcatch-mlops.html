@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projeto 27 — Playcatch MLOps</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080b12;--card:#111828;--border:#1e2a42;--text:#e8edf8;--accent:#4f8cff;--purple:#a44dff;--muted:#7a87a0;--green:#22c55e}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.7}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.container{max-width:820px;margin:0 auto;padding:2rem 1.5rem}
+nav{padding:1.2rem 0;border-bottom:1px solid var(--border);margin-bottom:2.5rem}
+nav a{font-size:.95rem;color:var(--muted)}nav a:hover{color:var(--accent)}
+.badge{display:inline-block;background:var(--border);color:var(--accent);padding:.2rem .7rem;border-radius:6px;font-size:.8rem;margin:.2rem .3rem .2rem 0;font-family:'JetBrains Mono',monospace}
+.badge.purple{color:var(--purple);border:1px solid var(--purple)}
+.badge.green{color:var(--green);border:1px solid var(--green)}
+.hero{margin-bottom:3rem}.hero .number{font-size:3.5rem;font-weight:700;color:var(--purple);opacity:.5;line-height:1}
+.hero h1{font-size:2rem;font-weight:700;margin:.5rem 0 .8rem}
+.hero p{color:var(--muted);font-size:1.05rem;max-width:600px}.tags{margin-top:1rem}
+section{margin-bottom:3rem}section h2{font-size:1.3rem;font-weight:700;margin-bottom:1rem;color:var(--accent)}
+pre{background:#0d1117;border:1px solid var(--border);border-radius:10px;padding:1.2rem;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;line-height:1.6;color:#c9d1d9}
+.kw{color:#ff7b72}.fn{color:#d2a8ff}.st{color:#a5d6ff}.cm{color:#8b949e}.op{color:#79c0ff}.nb{color:#ffa657}
+ul{list-style:none;padding:0}ul li{position:relative;padding-left:1.5rem;margin-bottom:.8rem;color:var(--muted)}
+ul li::before{content:"▸";position:absolute;left:0;color:var(--purple)}
+.actions{display:flex;gap:1rem;flex-wrap:wrap;margin-top:2rem}
+.btn{display:inline-block;padding:.7rem 1.5rem;border-radius:8px;font-weight:600;font-size:.9rem;transition:opacity .2s}
+.btn-primary{background:var(--accent);color:#fff}.btn-ghost{border:1px solid var(--border);color:var(--muted)}
+.btn:hover{opacity:.85;text-decoration:none}
+footer{border-top:1px solid var(--border);padding-top:1.5rem;margin-top:3rem;text-align:center;color:var(--muted);font-size:.8rem}
+.stage-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin-top:1rem}
+.stage-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem}
+.stage-card h3{font-size:1rem;font-weight:700;margin-bottom:.4rem}
+.stage-card p{color:var(--muted);font-size:.88rem;line-height:1.5}
+.security-list li::before{content:"🛡";position:absolute;left:0;color:var(--green)}
+</style>
+</head>
+<body>
+<div class="container">
+<nav><a href="../index.html">&larr; Voltar ao portfolio</a></nav>
+
+<div class="hero">
+  <div class="number">27</div>
+  <h1>Playcatch MLOps &mdash; Pipeline Completo de MLOps em Producao</h1>
+  <p>Pipeline end-to-end de MLOps: treino, avaliacao, deploy com FastAPI + Docker, monitoramento de drift e painel Gradio.</p>
+  <div class="tags">
+    <span class="badge">Playcatch</span>
+    <span class="badge">MLOps</span>
+    <span class="badge">FastAPI</span>
+    <span class="badge">Docker</span>
+    <span class="badge">MLflow</span>
+    <span class="badge purple">Gradio</span>
+  </div>
+</div>
+
+<section>
+  <h2>Pipeline</h2>
+  <pre>
+┌──────────────────┐   ┌──────────────┐   ┌───────────────────┐   ┌────────────┐
+│  Data + Train    │──▶│  Evaluate    │──▶│  Deploy           │──▶│  Monitor   │
+│  pandas + KNN    │   │  metricas    │   │  FastAPI + Docker  │   │  drift     │
+│  MLflow log      │   │  threshold   │   │  non-root          │   │  alertas   │
+└──────────────────┘   └──────────────┘   └───────────────────┘   └────────────┘
+  </pre>
+</section>
+
+<section>
+  <h2>Arquitetura</h2>
+  <pre>
+                    ┌──────────────────────────────┐
+                    │       Gradio Dashboard       │
+                    │  metricas + drift + retrain   │
+                    └──────────────┬───────────────┘
+                                   │
+┌────────────┐    ┌────────────────▼───────────────┐    ┌──────────────┐
+│  Client    │───▶│  FastAPI /recommend             │───▶│  MLflow      │
+│  (httpx)   │    │  Pydantic validation            │    │  Registry    │
+└────────────┘    │  rate limiting                  │    └──────────────┘
+                  └────────────────┬───────────────┘
+                                   │
+                  ┌────────────────▼───────────────┐
+                  │       Docker Container         │
+                  │  non-root · read-only · health  │
+                  └────────────────────────────────┘
+  </pre>
+</section>
+
+<section>
+  <h2>Estrutura do projeto</h2>
+  <pre>
+playcatch-mlops/
+├── data/
+│   └── tracks.csv
+├── src/
+│   ├── pipeline.py
+│   ├── evaluate.py
+│   ├── api.py
+│   ├── monitor.py
+│   └── panel.py
+├── tests/
+│   ├── test_pipeline.py
+│   ├── test_api.py
+│   └── test_monitor.py
+├── Dockerfile
+├── docker-compose.yml
+└── requirements.txt
+  </pre>
+</section>
+
+<section>
+  <h2>Etapas</h2>
+  <div class="stage-grid">
+    <div class="stage-card">
+      <h3>Data + Train</h3>
+      <p>Ingestao de dados, feature engineering e treino do modelo KNN. Cada run logada no MLflow com parametros e artefatos.</p>
+    </div>
+    <div class="stage-card">
+      <h3>Evaluate</h3>
+      <p>Avaliacao automatica com metricas de precisao e recall. Gate de qualidade: modelo so promove se passar threshold.</p>
+    </div>
+    <div class="stage-card">
+      <h3>Deploy</h3>
+      <p>API FastAPI com validacao Pydantic servida em container Docker non-root. Healthcheck e rate limiting integrados.</p>
+    </div>
+    <div class="stage-card">
+      <h3>Monitor</h3>
+      <p>Deteccao de data drift por comparacao de distribuicoes. Alerta automatico e trigger de re-treino quando drift detectado.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Codigo destaque</h2>
+  <pre><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, HTTPException
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+<span class="kw">import</span> mlflow.sklearn
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+app = FastAPI()
+model = mlflow.sklearn.load_model(<span class="st">"models:/knn_recommender/Production"</span>)
+
+<span class="kw">class</span> <span class="fn">RecommendRequest</span>(BaseModel):
+    track_features: <span class="nb">list</span>[<span class="nb">float</span>]
+    n_results: <span class="nb">int</span> = <span class="op">5</span>
+
+<span class="fn">@app.post</span>(<span class="st">"/recommend"</span>)
+<span class="kw">def</span> <span class="fn">recommend</span>(req: RecommendRequest):
+    features = np.array(req.track_features).reshape(<span class="op">1</span>, <span class="op">-1</span>)
+    distances, indices = model.kneighbors(
+        features, n_neighbors=req.n_results,
+    )
+    <span class="kw">return</span> {
+        <span class="st">"indices"</span>: indices[<span class="op">0</span>].tolist(),
+        <span class="st">"distances"</span>: distances[<span class="op">0</span>].tolist(),
+    }
+
+<span class="cm"># Drift detection</span>
+<span class="kw">def</span> <span class="fn">detect_drift</span>(reference: np.ndarray, current: np.ndarray, threshold: <span class="nb">float</span> = <span class="op">0.05</span>) -> <span class="nb">bool</span>:
+    <span class="st">"""KS-test por feature: drift se p-value abaixo do threshold."""</span>
+    <span class="kw">from</span> scipy.stats <span class="kw">import</span> ks_2samp
+    <span class="kw">for</span> col <span class="kw">in</span> <span class="nb">range</span>(reference.shape[<span class="op">1</span>]):
+        stat, pvalue = ks_2samp(reference[:, col], current[:, col])
+        <span class="kw">if</span> pvalue < threshold:
+            <span class="kw">return</span> <span class="op">True</span>
+    <span class="kw">return</span> <span class="op">False</span>
+</pre>
+</section>
+
+<section>
+  <h2>Seguranca</h2>
+  <ul class="security-list">
+    <li><strong>Container non-root</strong> &mdash; Dockerfile com USER nao-root, cap_drop ALL e filesystem read-only.</li>
+    <li><strong>Rate limiting</strong> &mdash; Limite por IP na API para prevenir abuso de recursos.</li>
+    <li><strong>Structured logging</strong> &mdash; Logs JSON com request_id para rastreabilidade ponta-a-ponta.</li>
+    <li><strong>Drift detection</strong> &mdash; KS-test automatico detecta degradacao antes de impactar usuarios.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>O que aprendi</h2>
+  <ul>
+    <li><strong>Pipeline MLOps completo</strong> &mdash; Do treino ao monitoramento em producao, cada etapa automatizada e versionada.</li>
+    <li><strong>Model registry com MLflow</strong> &mdash; Promocao de modelo por stages (Staging, Production) com rollback trivial.</li>
+    <li><strong>Container hardening</strong> &mdash; Non-root, read-only, healthcheck: seguranca sem complexidade.</li>
+    <li><strong>Drift como trigger</strong> &mdash; Monitoramento proativo que dispara re-treino automaticamente.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Stack</h2>
+  <div class="tags">
+    <span class="badge">pandas</span>
+    <span class="badge">scikit-learn</span>
+    <span class="badge">MLflow</span>
+    <span class="badge">FastAPI</span>
+    <span class="badge">Docker</span>
+    <span class="badge">Gradio</span>
+    <span class="badge">httpx</span>
+    <span class="badge">Pydantic</span>
+    <span class="badge">pytest</span>
+    <span class="badge">uvicorn</span>
+  </div>
+</section>
+
+<div class="actions">
+  <a href="https://github.com/isaac-carvalho/playcatch-mlops" class="btn btn-primary" target="_blank">Ver codigo no GitHub</a>
+  <a href="../index.html" class="btn btn-ghost">&larr; Voltar ao portfolio</a>
+</div>
+
+<footer>Oaken Agentes &mdash; Portfolio de IA &amp; Agentes</footer>
+</div>
+</body>
+</html>
