@@ -41,14 +41,14 @@ footer{border-top:1px solid var(--border);padding-top:1.5rem;margin-top:3rem;tex
   <h1>Oaken:Build — Agente de IA pra Gestão de Obra</h1>
   <p>App full-stack para mestre de obra e pequena empreiteira: chat com IA que calcula materiais via function-calling, cronograma por caminho crítico, orçamento e fotos da obra.</p>
   <div class="tags">
-    <span class="badge">OpenAI Function Calling</span>
+    <span class="badge">Groq Function Calling</span>
     <span class="badge">Express + Prisma</span>
     <span class="badge">JWT + bcrypt</span>
     <span class="badge purple">Agent</span>
   </div>
 </div>
 
-<div class="note"><strong>Nota:</strong> este projeto tem backend real (Node/Express, base de dados, chamadas à API da OpenAI) — a demo ao vivo é uma página de apresentação estática, porque a aplicação funcional exige um servidor. O código completo, pronto pra correr numa VPS com PM2 + Nginx, está no repositório.</div>
+<div class="note"><strong>Nota:</strong> a demo abaixo corre num plano gratuito do Render — pode "adormecer" após uns minutos sem uso (o primeiro pedido demora a acordar) e o armazenamento não é permanente. Cria uma conta e testa à vontade; para uso real, o repositório tem o guia de deploy em VPS com persistência de verdade.</div>
 
 <section>
   <h2>Arquitetura</h2>
@@ -113,7 +113,7 @@ footer{border-top:1px solid var(--border);padding-top:1.5rem;margin-top:3rem;tex
 </section>
 
 <div class="actions">
-  <a href="https://isaac-carvalho.github.io/oaken-build/" class="btn btn-primary" target="_blank">Ver apresentação</a>
+  <a href="https://oaken-build.onrender.com" class="btn btn-primary" target="_blank">🚀 Testar ao vivo</a>
   <a href="https://github.com/isaac-carvalho/oaken-build" class="btn btn-ghost" target="_blank">Ver código no GitHub</a>
   <a href="../index.html" class="btn btn-ghost">← Voltar ao portfolio</a>
 </div>
