@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projeto 29 — Oaken:Build, Agente de Gestão de Obra</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080b12;--card:#111828;--border:#1e2a42;--text:#e8edf8;--accent:#4f8cff;--purple:#a44dff;--muted:#7a87a0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.7}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.container{max-width:820px;margin:0 auto;padding:2rem 1.5rem}
+nav{padding:1.2rem 0;border-bottom:1px solid var(--border);margin-bottom:2.5rem}
+nav a{font-size:.95rem;color:var(--muted)}nav a:hover{color:var(--accent)}
+.badge{display:inline-block;background:var(--border);color:var(--accent);padding:.2rem .7rem;border-radius:6px;font-size:.8rem;margin:.2rem .3rem .2rem 0;font-family:'JetBrains Mono',monospace}
+.badge.purple{color:var(--purple);border:1px solid var(--purple)}
+.hero{margin-bottom:3rem}.hero .number{font-size:3.5rem;font-weight:700;color:var(--purple);opacity:.5;line-height:1}
+.hero h1{font-size:2rem;font-weight:700;margin:.5rem 0 .8rem}
+.hero p{color:var(--muted);font-size:1.05rem;max-width:600px}.tags{margin-top:1rem}
+section{margin-bottom:3rem}section h2{font-size:1.3rem;font-weight:700;margin-bottom:1rem;color:var(--accent)}
+pre{background:#0d1117;border:1px solid var(--border);border-radius:10px;padding:1.2rem;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.85rem;line-height:1.6;color:#c9d1d9}
+.kw{color:#ff7b72}.fn{color:#d2a8ff}.st{color:#a5d6ff}.cm{color:#8b949e}.op{color:#79c0ff}.nb{color:#ffa657}
+ul{list-style:none;padding:0}ul li{position:relative;padding-left:1.5rem;margin-bottom:.8rem;color:var(--muted)}
+ul li::before{content:"▸";position:absolute;left:0;color:var(--purple)}
+.actions{display:flex;gap:1rem;flex-wrap:wrap;margin-top:2rem}
+.btn{display:inline-block;padding:.7rem 1.5rem;border-radius:8px;font-weight:600;font-size:.9rem;transition:opacity .2s}
+.btn-primary{background:var(--accent);color:#fff}.btn-ghost{border:1px solid var(--border);color:var(--muted)}
+.btn:hover{opacity:.85;text-decoration:none}
+.note{background:rgba(164,77,255,0.08);border:1px solid rgba(164,77,255,0.3);border-radius:10px;padding:1rem 1.2rem;font-size:.9rem;color:var(--muted);margin-bottom:2rem}
+.note strong{color:var(--text)}
+footer{border-top:1px solid var(--border);padding-top:1.5rem;margin-top:3rem;text-align:center;color:var(--muted);font-size:.8rem}
+</style>
+</head>
+<body>
+<div class="container">
+<nav><a href="../index.html">← Voltar ao portfolio</a></nav>
+
+<div class="hero">
+  <div class="number">29</div>
+  <h1>Oaken:Build — Agente de IA pra Gestão de Obra</h1>
+  <p>App full-stack para mestre de obra e pequena empreiteira: chat com IA que calcula materiais via function-calling, cronograma por caminho crítico, orçamento e fotos da obra.</p>
+  <div class="tags">
+    <span class="badge">OpenAI Function Calling</span>
+    <span class="badge">Express + Prisma</span>
+    <span class="badge">JWT + bcrypt</span>
+    <span class="badge purple">Agent</span>
+  </div>
+</div>
+
+<div class="note"><strong>Nota:</strong> este projeto tem backend real (Node/Express, base de dados, chamadas à API da OpenAI) — a demo ao vivo é uma página de apresentação estática, porque a aplicação funcional exige um servidor. O código completo, pronto pra correr numa VPS com PM2 + Nginx, está no repositório.</div>
+
+<section>
+  <h2>Arquitetura</h2>
+  <pre>
+┌────────────┐     ┌──────────────┐     ┌────────────┐
+│  Usuario   │────▶│  GPT-4o-mini │────▶│  Tool call │
+│  (chat)    │     │  (agente)    │     │  decision  │
+└────────────┘     └──────────────┘     └─────┬──────┘
+                                              │
+      ┌───────────────┬───────────────┬──────▼───────┐
+      │  calcular_     │  verificar_   │  calcular_   │
+      │  tijolos/ferro │  estrutura    │  caminho_    │
+      │  /concreto     │  (NBR 6118)   │  critico     │
+      └───────┬───────┴───────┬───────┴──────┬───────┘
+              │               │               │
+              └───────────────┴───────────────┘
+                              │
+                       ┌──────▼──────┐
+                       │  Prisma /   │
+                       │  SQLite     │
+                       │  (isolado   │
+                       │  por userId)│
+                       └─────────────┘
+  </pre>
+</section>
+
+<section>
+  <h2>Código destaque</h2>
+  <pre><span class="cm">// Registry de ferramentas expostas ao agente via function-calling</span>
+<span class="kw">const</span> toolDefinitions = [{
+  <span class="nb">type</span>: <span class="st">'function'</span>,
+  <span class="nb">function</span>: {
+    name: <span class="st">'calcular_ferro'</span>,
+    description: <span class="st">'Calcula kg de vergalhao para um volume de concreto'</span>,
+    parameters: { <span class="nb">type</span>: <span class="st">'object'</span>, properties: {
+      volume_concreto: { <span class="nb">type</span>: <span class="st">'number'</span> },
+      elemento: { <span class="nb">type</span>: <span class="st">'string'</span>, <span class="nb">enum</span>: [<span class="st">'laje'</span>,<span class="st">'viga'</span>,<span class="st">'pilar'</span>,<span class="st">'fundacao'</span>] },
+    }, required: [<span class="st">'volume_concreto'</span>] },
+  },
+}];
+
+<span class="cm">// Middleware: nunca confia em projectId do body sem checar dono</span>
+<span class="kw">async</span> <span class="kw">function</span> <span class="fn">ensureProjectAccess</span>(req, res, next) {
+  <span class="kw">const</span> project = <span class="kw">await</span> prisma.project.findUnique({
+    where: { id: req.params.projectId },
+    select: { id: <span class="kw">true</span>, userId: <span class="kw">true</span> },
+  });
+  <span class="kw">if</span> (!project || project.userId !== req.user.id)
+    <span class="kw">return</span> res.status(<span class="op">403</span>).json({ error: <span class="st">'Sem acesso.'</span> });
+  next();
+}</pre>
+</section>
+
+<section>
+  <h2>O que aprendi</h2>
+  <ul>
+    <li><strong>Function-calling com contexto de negócio</strong> — O agente decide qual ferramenta chamar (cálculo de material, caminho crítico, matriz de risco) a partir da linguagem natural do mestre de obra.</li>
+    <li><strong>Upload validado de verdade</strong> — Checagem de assinatura binária real (magic bytes) do ficheiro, não só da extensão declarada pelo cliente.</li>
+    <li><strong>Async error handling em Express 4</strong> — Revisão própria encontrou que handlers assíncronos sem wrapper podiam derrubar o processo inteiro num erro de banco; corrigido com um <code>asyncHandler</code> aplicado a todas as rotas.</li>
+    <li><strong>Caminho crítico (CPM)</strong> — Ordenação topológica + deteção de ciclo antes de calcular folga e caminho crítico entre tarefas dependentes.</li>
+  </ul>
+</section>
+
+<div class="actions">
+  <a href="https://isaac-carvalho.github.io/oaken-build/" class="btn btn-primary" target="_blank">Ver apresentação</a>
+  <a href="https://github.com/isaac-carvalho/oaken-build" class="btn btn-ghost" target="_blank">Ver código no GitHub</a>
+  <a href="../index.html" class="btn btn-ghost">← Voltar ao portfolio</a>
+</div>
+
+<footer>Oaken Agentes &mdash; Portfolio de IA &amp; Agentes</footer>
+</div>
+</body>
+</html>
