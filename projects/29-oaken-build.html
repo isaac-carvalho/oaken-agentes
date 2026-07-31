@@ -43,6 +43,7 @@ footer{border-top:1px solid var(--border);padding-top:1.5rem;margin-top:3rem;tex
   <div class="tags">
     <span class="badge">Groq Function Calling</span>
     <span class="badge">Express + Prisma</span>
+    <span class="badge">Gemini Vision</span>
     <span class="badge">JWT + bcrypt</span>
     <span class="badge purple">Agent</span>
   </div>
@@ -105,6 +106,8 @@ footer{border-top:1px solid var(--border);padding-top:1.5rem;margin-top:3rem;tex
 <section>
   <h2>O que aprendi</h2>
   <ul>
+    <li><strong>Visão aplicada a canteiro de obra</strong> — o utilizador tira foto pelo telemóvel e um modelo de visão descreve a etapa, aponta risco de segurança visível ou problema de execução. Como o Groq não tem modelo de visão no tier gratuito, a análise usa um provedor separado (Gemini), configurável por variável de ambiente sem tocar no código.</li>
+    <li><strong>Moeda multi-região</strong> — Kwanza, Real e Euro com conversão real; os valores ficam sempre guardados em Kwanza na base, e só a apresentação muda.</li>
     <li><strong>Function-calling com contexto de negócio</strong> — O agente decide qual ferramenta chamar (cálculo de material, caminho crítico, matriz de risco) a partir da linguagem natural do mestre de obra.</li>
     <li><strong>Upload validado de verdade</strong> — Checagem de assinatura binária real (magic bytes) do ficheiro, não só da extensão declarada pelo cliente.</li>
     <li><strong>Async error handling em Express 4</strong> — Revisão própria encontrou que handlers assíncronos sem wrapper podiam derrubar o processo inteiro num erro de banco; corrigido com um <code>asyncHandler</code> aplicado a todas as rotas.</li>
